@@ -1,0 +1,12 @@
+{
+  "name": "gayxxx-nuvio-validation",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "validate": "node tools/validate.mjs",
+    "test": "node tools/smoke-test.mjs"
+  },
+  "devDependencies": {
+    "cheerio-without-node-native": "0.20.2"
+  }
+}

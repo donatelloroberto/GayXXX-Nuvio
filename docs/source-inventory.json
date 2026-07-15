@@ -1,0 +1,353 @@
+{
+  "sourceArchive": "GayXXX-builds.zip",
+  "providerPackageCount": 26,
+  "packages": [
+    {
+      "package": "BLvietsub",
+      "cloudStreamPluginClass": "com.BLvietsub.BLvietsubPlugin",
+      "cloudStreamVersion": 3,
+      "classesDexSha256": "2562bf54b4df7e51b42731f4c00d61cf1947cfbbbba313e039290f27cf4b2461",
+      "manifestSha256": "049a66c0a8e8dd244119d7544410c63c264926643a46e0315eb20a210d821e61",
+      "decompiledMainApiClasses": [
+        "Lcom/BLvietsub/BLvietsub;"
+      ],
+      "detectedBaseUrls": [
+        "https://www.blvietsub.vip"
+      ]
+    },
+    {
+      "package": "BestHDgayporn",
+      "cloudStreamPluginClass": "com.BestHDgayporn.BestHDgaypornProvider",
+      "cloudStreamVersion": 2,
+      "classesDexSha256": "f94a0273198d0ae84114b65029168f3013430f5df62f985aace046b799ea862b",
+      "manifestSha256": "18ca671bcadbcdcf2b0a0268a318e266e5521fbccd038f49001c0cc92063aaa3",
+      "decompiledMainApiClasses": [
+        "Lcom/BestHDgayporn/BestHDgayporn;"
+      ],
+      "detectedBaseUrls": [
+        "https://besthdgayporn.com"
+      ]
+    },
+    {
+      "package": "BoyfriendTV",
+      "cloudStreamPluginClass": "com.BoyfriendTV.BoyfriendTVProvider",
+      "cloudStreamVersion": 1,
+      "classesDexSha256": "569ad6a8348f040af7aa71b884de2afa07289107522851a83835933971385c8f",
+      "manifestSha256": "8ec85df554881c25c59760195e1c4ace98964ddc89477662738ceae8d6b04ab9",
+      "decompiledMainApiClasses": [
+        "Lcom/BoyfriendTV/BoyfriendTV;"
+      ],
+      "detectedBaseUrls": [
+        "https://www.boyfriendtv.com"
+      ]
+    },
+    {
+      "package": "Fullboys",
+      "cloudStreamPluginClass": "com.Fullboys.FullboysProvider",
+      "cloudStreamVersion": 4,
+      "classesDexSha256": "f7bf6d96eb6f8ff35287249f27947966ef888c34df8d8cef1e68d25d15ca41ce",
+      "manifestSha256": "c9a3d15c18a2bf9fd5a0ee5e86bc7ad723a9c6fe403c669f0e6ab88177ef59ea",
+      "decompiledMainApiClasses": [
+        "Lcom/Fullboys/Fullboys;"
+      ],
+      "detectedBaseUrls": [
+        "https://fullboys.com"
+      ]
+    },
+    {
+      "package": "Fxggxt",
+      "cloudStreamPluginClass": "com.Fxggxt.FxggxtPlugin",
+      "cloudStreamVersion": 3,
+      "classesDexSha256": "19e84c995c1d06ede57687985c1ef61b6b9c4efa06f117f0e7a80526ef3e3205",
+      "manifestSha256": "2a6a0dc6c02a42d685fb95942dc855e6d20967b50484c79260f5fbb82e18998a",
+      "decompiledMainApiClasses": [
+        "Lcom/Fxggxt/Fxggxt;"
+      ],
+      "detectedBaseUrls": [
+        "https://fxggxt.com"
+      ]
+    },
+    {
+      "package": "FxggxtOrg",
+      "cloudStreamPluginClass": "com.FxggxtOrg.FxggxtOrgPlugin",
+      "cloudStreamVersion": 3,
+      "classesDexSha256": "de3c27d69e97c2f5ee45757783bb709338d3d6a5ac5f17b6d9b6ace4424e818e",
+      "manifestSha256": "c2b241b359b587f7c546414c34d9f76117a9ca2aeb78236379f494ff0538b1b7",
+      "decompiledMainApiClasses": [
+        "Lcom/FxggxtOrg/FxggxtOrg;"
+      ],
+      "detectedBaseUrls": [
+        "https://fxggxt.org"
+      ]
+    },
+    {
+      "package": "GEPorner",
+      "cloudStreamPluginClass": "com.GEporner.GEpornerProvider",
+      "cloudStreamVersion": 2,
+      "classesDexSha256": "df52e39e12a38f3e28f3cf89825b53599815943a0eb4b3477d93051414964f7c",
+      "manifestSha256": "fc5cc84e596b6cf36bd2320f2531988f95d74d145e929f5bcf3e2b5f2661b9ff",
+      "decompiledMainApiClasses": [
+        "Lcom/GEporner/GEporner;"
+      ],
+      "detectedBaseUrls": [
+        "https://www.eporner.com",
+        "https://www.eporner.com/xhr/video/"
+      ]
+    },
+    {
+      "package": "GPornOne",
+      "cloudStreamPluginClass": "com.GPornOne.GPornOneProvider",
+      "cloudStreamVersion": 1,
+      "classesDexSha256": "bb955cd50a40cd53dc024e031fd16d5913b0adf7664795bfe094f9c1b1b4edb0",
+      "manifestSha256": "f2aa634edf4dd97ef73c71c04ed80070da662ad5b9e7664ffaa2e17c3d33fb24",
+      "decompiledMainApiClasses": [
+        "Lcom/GPornOne/GPornOne;"
+      ],
+      "detectedBaseUrls": [
+        "https://pornone.com/gay"
+      ]
+    },
+    {
+      "package": "GVhot",
+      "cloudStreamPluginClass": "com.GVhot.GVhotProvider",
+      "cloudStreamVersion": 1,
+      "classesDexSha256": "b2852e04dec8673896b2a4efe90573cfa6acaaa044e1bcdc11b6a7d8e1c7430b",
+      "manifestSha256": "362d5a091b2cf826a7a272ab3e967930704edcada05e330c1d69fb7115e01da4",
+      "decompiledMainApiClasses": [
+        "Lcom/GVhot/GVhot;"
+      ],
+      "detectedBaseUrls": [
+        "https://www.gvhot.com"
+      ]
+    },
+    {
+      "package": "GXtapes",
+      "cloudStreamPluginClass": "com.GXtapes.GXtapesProvider",
+      "cloudStreamVersion": 3,
+      "classesDexSha256": "13bc487b6ebb79cff37ddb3a5ef6a832e1ab986bdf8d934fc3419226b28afc92",
+      "manifestSha256": "f04d115279b08774a15a1fc2a06ccbe99e9fec6f6a1d1c093cc08c2e73361033",
+      "decompiledMainApiClasses": [
+        "Lcom/GXtapes/GXtapes;"
+      ],
+      "detectedBaseUrls": [
+        "https://gay.xtapes.tw"
+      ]
+    },
+    {
+      "package": "GayKinkyPorn",
+      "cloudStreamPluginClass": "com.GayKinkyPorn.GayKinkyPornProvider",
+      "cloudStreamVersion": 1,
+      "classesDexSha256": "2113045443605058bb52e0b452641dbb1b41aea8023e2d1f9bac86b4f800648b",
+      "manifestSha256": "4b3a179d04a39e4adecb22d1adaf5832ef1e3c48f1689a8081bbeeb3d52da6f3",
+      "decompiledMainApiClasses": [
+        "Lcom/GayKinkyPorn/GayKinkyPorn;"
+      ],
+      "detectedBaseUrls": [
+        "https://gaykinkyporn.com"
+      ]
+    },
+    {
+      "package": "GayStream",
+      "cloudStreamPluginClass": "com.GayStream.GayStreamProvider",
+      "cloudStreamVersion": 2,
+      "classesDexSha256": "ff5f662fbbbbc177b17922a7de4beccc15c248787a493166da62ad25502dd438",
+      "manifestSha256": "e62e38823fdaf294a0fe231e8a22be0d7e37174786e68e8baf53807fa3bb9ac7",
+      "decompiledMainApiClasses": [
+        "Lcom/GayStream/GayStream;"
+      ],
+      "detectedBaseUrls": [
+        "https://gaystream.pw"
+      ]
+    },
+    {
+      "package": "Gaycock4U",
+      "cloudStreamPluginClass": "com.Gaycock4U.Gaycock4UPlugin",
+      "cloudStreamVersion": 2,
+      "classesDexSha256": "fd99e58eb15acfa537eb165224708bd4b7cd569ddf4646ef187e2c5eb46c02c8",
+      "manifestSha256": "3f92f4ea82e84d8eb0ce87750b3723ae6ddf32b6f11cee9a81adf961b90d1e7f",
+      "decompiledMainApiClasses": [
+        "Lcom/Gaycock4U/Gaycock4U;"
+      ],
+      "detectedBaseUrls": [
+        "https://gaycock4u.com"
+      ]
+    },
+    {
+      "package": "Gaypornhot",
+      "cloudStreamPluginClass": "com.Gaypornhot.GaypornhotPlugin",
+      "cloudStreamVersion": 4,
+      "classesDexSha256": "2f8ed403c1cbc99791bf36185f67ece5e2aa9d3c34e93b45714b8a0902583720",
+      "manifestSha256": "235b8ddbfbe5d70dc4427626cc7f005a395123891f44b9eb5a786e1af14d0efa",
+      "decompiledMainApiClasses": [
+        "Lcom/Gaypornhot/Gaypornhot2;",
+        "Lcom/Gaypornhot/Gaypornhot3;",
+        "Lcom/Gaypornhot/Gaypornhot4;",
+        "Lcom/Gaypornhot/Gaypornhot5;",
+        "Lcom/Gaypornhot/Gaypornhot;"
+      ],
+      "detectedBaseUrls": [
+        "https://www.gaypornhot.com"
+      ]
+    },
+    {
+      "package": "Gaypornvidsxxx",
+      "cloudStreamPluginClass": "com.Gaypornvidsxxx.GaypornvidsxxxPlugin",
+      "cloudStreamVersion": 3,
+      "classesDexSha256": "2f345462b021be5063619e8a07ca9b804fb37ec7cf06a1443ef44c6700090fce",
+      "manifestSha256": "ec60018d81122b38a3a5bd2a5b9551722cb45c3f741a8d681d6e571bf9bf8b15",
+      "decompiledMainApiClasses": [
+        "Lcom/Gaypornvidsxxx/Gaypornvidsxxx;"
+      ],
+      "detectedBaseUrls": [
+        "https://www.gaypornvidsxxx.com"
+      ]
+    },
+    {
+      "package": "Gayxx",
+      "cloudStreamPluginClass": "com.Gayxx.GayxxProvider",
+      "cloudStreamVersion": 3,
+      "classesDexSha256": "d733aa8f09da025f205af6656edffa878662c939834e58d2ca5c8333ceca3ba9",
+      "manifestSha256": "d4fd4c599ba4210d9ffdbf346a750c14904bfcf264e4765b1867a73366d3be77",
+      "decompiledMainApiClasses": [
+        "Lcom/Gayxx/Asiangay;",
+        "Lcom/Gayxx/Boyplus;"
+      ],
+      "detectedBaseUrls": [
+        "https://[^",
+        "https://asiangaysex.net",
+        "https://boyplus",
+        "https://boyplus.net"
+      ]
+    },
+    {
+      "package": "Justthegays",
+      "cloudStreamPluginClass": "com.Justthegays.JustthegaysProvider",
+      "cloudStreamVersion": 2,
+      "classesDexSha256": "5d25a789b0f6e716e686c6737fe56f3f1445a01fe14678b13ddeeb39345ef3e3",
+      "manifestSha256": "e695d40d07e7be65fd905f83c9cdf1358f9b35a7ae2f4bef079516266cc62d66",
+      "decompiledMainApiClasses": [
+        "Lcom/Justthegays/Justthegays;"
+      ],
+      "detectedBaseUrls": [
+        "https://justthegays.com"
+      ]
+    },
+    {
+      "package": "KRX18",
+      "cloudStreamPluginClass": "com.KRX18.KRX18Plugin",
+      "cloudStreamVersion": 2,
+      "classesDexSha256": "081ff5d3645d523a86cb374eea149089a11c2ed8a9e4d23db40843dc517548e3",
+      "manifestSha256": "9e8e11282acbb07586c982fb7f521ec8ebdf0f89bb456bc03e1e67415097943a",
+      "decompiledMainApiClasses": [
+        "Lcom/KRX18/KRX18;"
+      ],
+      "detectedBaseUrls": [
+        "https://krx18.com"
+      ]
+    },
+    {
+      "package": "MenXtube",
+      "cloudStreamPluginClass": "com.MenXtube.MenXtubeProvider",
+      "cloudStreamVersion": 3,
+      "classesDexSha256": "0063b2a8bc1f3883b208a96bdcf53e78907dc09711dcc4cab59bb64d89f85a29",
+      "manifestSha256": "5d3659a5fb17d47f7ab6c322d6904d39769e95617c507c245f9772e22e2b658b",
+      "decompiledMainApiClasses": [
+        "Lcom/MenXtube/MenXtube;"
+      ],
+      "detectedBaseUrls": [
+        "https://www.menxtube.com"
+      ]
+    },
+    {
+      "package": "Nurgay",
+      "cloudStreamPluginClass": "com.Nurgay.NurgayProvider",
+      "cloudStreamVersion": 2,
+      "classesDexSha256": "6ef28f6b3770c56a2aa36e38e81af6e6c6ccf697bd4c6a574c4cc16a9e801c12",
+      "manifestSha256": "3367f35b3cc593e1b1d686374200cece04cbe6ffc44bf0bbd2114ffdcfb74b3f",
+      "decompiledMainApiClasses": [
+        "Lcom/Nurgay/Nurgay;"
+      ],
+      "detectedBaseUrls": [
+        "https://nurgay.to"
+      ]
+    },
+    {
+      "package": "Traingon",
+      "cloudStreamPluginClass": "com.Traingon.TraingonProvider",
+      "cloudStreamVersion": 3,
+      "classesDexSha256": "04771639afcb7a1c8efe54fe18f265fe744f552d9f9c7863b754dd2d0934713b",
+      "manifestSha256": "7c1b9542600ac156d72bc6b283fe8b49ee7fda848bc83ccf9f26c254bd2c774d",
+      "decompiledMainApiClasses": [
+        "Lcom/Traingon/Traingon;"
+      ],
+      "detectedBaseUrls": [
+        "https://traingon.top"
+      ]
+    },
+    {
+      "package": "Videosxgays",
+      "cloudStreamPluginClass": "com.Videosxgays.VideosxgaysProvider",
+      "cloudStreamVersion": 3,
+      "classesDexSha256": "7d76249a5a888fe1fe2895885ba2e338ac2332a533de23f4c45008e79c79d6d0",
+      "manifestSha256": "857b5425394590a4259d371584ec009ecd080f93a331749779a88c8794712c84",
+      "decompiledMainApiClasses": [
+        "Lcom/Videosxgays/Videosxgays;"
+      ],
+      "detectedBaseUrls": [
+        "https://www.gayxnow.com"
+      ]
+    },
+    {
+      "package": "Xhamster",
+      "cloudStreamPluginClass": "Xhamster.XhamsterProvider",
+      "cloudStreamVersion": 1,
+      "classesDexSha256": "2e76c3257196e835fc4ff40c8764233177df8cab556eb5ab304476405e11fe25",
+      "manifestSha256": "31deba97e8d23c3db637cec09b154edf917ae7c6a3d142ddf26eb6267712137b",
+      "decompiledMainApiClasses": [
+        "LXhamster/Xhamster;"
+      ],
+      "detectedBaseUrls": [
+        "https://vi.xhspot.com/gay"
+      ]
+    },
+    {
+      "package": "XvideosGay",
+      "cloudStreamPluginClass": "XvideosGay.XvideosGayPlugin",
+      "cloudStreamVersion": 2,
+      "classesDexSha256": "461f24dd23daf493d00b1f449db12fb46d8cf32ebd048a5289d5eae72d05e4c7",
+      "manifestSha256": "10284acc6fd0c1c6a802ad7efca1bd2cf975f578538e82d1fb2ed3c5de3c4970",
+      "decompiledMainApiClasses": [
+        "LXvideosGay/XvideosGay;"
+      ],
+      "detectedBaseUrls": [
+        "https://www.xvv1deos.com"
+      ]
+    },
+    {
+      "package": "iGay69",
+      "cloudStreamPluginClass": "com.iGay69.iGay69Plugin",
+      "cloudStreamVersion": 3,
+      "classesDexSha256": "de30568d6c1522a97cd01620edfba3cf6ddc90eed09422c6da88904e2c434f96",
+      "manifestSha256": "e61e29c1e940f3f6289e97c0ad028cddf3a6b64e0570cba5fa1c0e1b358d6949",
+      "decompiledMainApiClasses": [
+        "Lcom/iGay69/iGay69;"
+      ],
+      "detectedBaseUrls": [
+        "https://igay69.com"
+      ]
+    },
+    {
+      "package": "topHDgayporn",
+      "cloudStreamPluginClass": "com.topHDgayporn.topHDgaypornProvider",
+      "cloudStreamVersion": 2,
+      "classesDexSha256": "79eb82c4da232af810214b860a4563e4a257c19565176a624105e0c7d1e3d286",
+      "manifestSha256": "effa818c68a7c6fe2ace9416bf915c8d3afddac36a8cbe174072b2dbdb7f605d",
+      "decompiledMainApiClasses": [
+        "Lcom/topHDgayporn/topHDgayporn;"
+      ],
+      "detectedBaseUrls": [
+        "https://tophdgayporn.com"
+      ]
+    }
+  ]
+}

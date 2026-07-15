@@ -1,0 +1,369 @@
+[
+  {
+    "cloudStreamPackage": "BLvietsub",
+    "nuvioId": "blvietsub",
+    "nuvioFile": "providers/blvietsub.js",
+    "baseUrl": "https://www.blvietsub.vip",
+    "searchTemplates": [
+      "/page/1/?s=%q%"
+    ],
+    "itemSelector": "div.phimitem",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie",
+      "tv"
+    ]
+  },
+  {
+    "cloudStreamPackage": "BestHDgayporn",
+    "nuvioId": "besthdgayporn",
+    "nuvioFile": "providers/besthdgayporn.js",
+    "baseUrl": "https://besthdgayporn.com",
+    "searchTemplates": [
+      "/search-videos/?vi=%q%"
+    ],
+    "itemSelector": "div.aiovg-item-video",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "BoyfriendTV",
+    "nuvioId": "boyfriendtv",
+    "nuvioFile": "providers/boyfriendtv.js",
+    "baseUrl": "https://www.boyfriendtv.com",
+    "searchTemplates": [
+      "/search/?q=%q%"
+    ],
+    "itemSelector": "ul.media-listing-grid.main-listing-grid-offset li",
+    "specialMode": "boyfriend",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "Fullboys",
+    "nuvioId": "fullboys",
+    "nuvioFile": "providers/fullboys.js",
+    "baseUrl": "https://fullboys.com",
+    "searchTemplates": [
+      "/home?search=%q%"
+    ],
+    "itemSelector": "article.movie-item",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "Fxggxt",
+    "nuvioId": "fxggxt",
+    "nuvioFile": "providers/fxggxt.js",
+    "baseUrl": "https://fxggxt.com",
+    "searchTemplates": [
+      "/?s=%q%"
+    ],
+    "itemSelector": "article.loop-video.thumb-block, article.loop-video",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "FxggxtOrg",
+    "nuvioId": "fxggxtorg",
+    "nuvioFile": "providers/fxggxtorg.js",
+    "baseUrl": "https://fxggxt.org",
+    "searchTemplates": [
+      "/?s=%q%"
+    ],
+    "itemSelector": "article.loop-video.thumb-block, article.loop-video",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "GEPorner",
+    "nuvioId": "geporner",
+    "nuvioFile": "providers/geporner.js",
+    "baseUrl": "https://www.eporner.com",
+    "searchTemplates": [
+      "/search/%slug%/"
+    ],
+    "itemSelector": "div.mb",
+    "specialMode": "eporner",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "GPornOne",
+    "nuvioId": "gpornone",
+    "nuvioFile": "providers/gpornone.js",
+    "baseUrl": "https://pornone.com/gay",
+    "searchTemplates": [
+      "https://pornone.com/search/gay/?q=%q%"
+    ],
+    "itemSelector": ".popbop.vidLinkFX",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "GVhot",
+    "nuvioId": "gvhot",
+    "nuvioFile": "providers/gvhot.js",
+    "baseUrl": "https://www.gvhot.com",
+    "searchTemplates": [
+      "/?s=%q%"
+    ],
+    "itemSelector": "div.video-card",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "GXtapes",
+    "nuvioId": "gxtapes",
+    "nuvioFile": "providers/gxtapes.js",
+    "baseUrl": "https://gay.xtapes.tw",
+    "searchTemplates": [
+      "/page/1/?s=%q%"
+    ],
+    "itemSelector": "ul.listing-tube li",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "GayKinkyPorn",
+    "nuvioId": "gaykinkyporn",
+    "nuvioFile": "providers/gaykinkyporn.js",
+    "baseUrl": "https://gaykinkyporn.com",
+    "searchTemplates": [
+      "/page/1/?s=%q%"
+    ],
+    "itemSelector": "article.loop-video, article.thumb-block",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "GayStream",
+    "nuvioId": "gaystream",
+    "nuvioFile": "providers/gaystream.js",
+    "baseUrl": "https://gaystream.pw",
+    "searchTemplates": [
+      "/page/1/?s=%q%&search=%q%"
+    ],
+    "itemSelector": "div.grid-item",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "Gaycock4U",
+    "nuvioId": "gaycock4u",
+    "nuvioFile": "providers/gaycock4u.js",
+    "baseUrl": "https://gaycock4u.com",
+    "searchTemplates": [
+      "/page/1/?s=%q%"
+    ],
+    "itemSelector": "div.elementor-widget-container article.elementor-post, article.elementor-post",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "Gaypornhot",
+    "nuvioId": "gaypornhot",
+    "nuvioFile": "providers/gaypornhot.js",
+    "baseUrl": "https://www.gaypornhot.com",
+    "searchTemplates": [
+      "/page/1/?s=%q%"
+    ],
+    "itemSelector": "div.videopost.col-md-3.col-sm-4.col-xs-6, div.videopost",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "Gaypornvidsxxx",
+    "nuvioId": "gaypornvidsxxx",
+    "nuvioFile": "providers/gaypornvidsxxx.js",
+    "baseUrl": "https://www.gaypornvidsxxx.com",
+    "searchTemplates": [
+      "/?s=%q%"
+    ],
+    "itemSelector": "div.item, div.video-item, article.blog-entry",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "Gayxx",
+    "nuvioId": "gayxx",
+    "nuvioFile": "providers/gayxx.js",
+    "baseUrl": "https://asiangaysex.net",
+    "searchTemplates": [
+      "https://asiangaysex.net/?s=%q%",
+      "https://boyplus.net/?s=%q%"
+    ],
+    "itemSelector": "article, div.item, div.video-item, div.thumb-block",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "Justthegays",
+    "nuvioId": "justthegays",
+    "nuvioFile": "providers/justthegays.js",
+    "baseUrl": "https://justthegays.com",
+    "searchTemplates": [
+      "/?s=%q%"
+    ],
+    "itemSelector": "div.col-xl-4, article, div.video-item",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "KRX18",
+    "nuvioId": "krx18",
+    "nuvioFile": "providers/krx18.js",
+    "baseUrl": "https://krx18.com",
+    "searchTemplates": [
+      "/search/videos?search_query=%q%"
+    ],
+    "itemSelector": "div.card.border-0, article, div.video-item",
+    "specialMode": "krx18",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "MenXtube",
+    "nuvioId": "menxtube",
+    "nuvioFile": "providers/menxtube.js",
+    "baseUrl": "https://www.menxtube.com",
+    "searchTemplates": [
+      "/search/?q=%q%"
+    ],
+    "itemSelector": "div.list-videos div.item",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "Nurgay",
+    "nuvioId": "nurgay",
+    "nuvioFile": "providers/nurgay.js",
+    "baseUrl": "https://nurgay.to",
+    "searchTemplates": [
+      "/?s=%q%&page=1"
+    ],
+    "itemSelector": "article.loop-video",
+    "specialMode": "nurgay",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "Traingon",
+    "nuvioId": "traingon",
+    "nuvioFile": "providers/traingon.js",
+    "baseUrl": "https://traingon.top",
+    "searchTemplates": [
+      "/search?q=%q%"
+    ],
+    "itemSelector": "a.card, div.card",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "Videosxgays",
+    "nuvioId": "videosxgays",
+    "nuvioFile": "providers/videosxgays.js",
+    "baseUrl": "https://www.gayxnow.com",
+    "searchTemplates": [
+      "/search/?q=%q%"
+    ],
+    "itemSelector": "ul.grid-temp li, ul.listing-tube li",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "Xhamster",
+    "nuvioId": "xhamster",
+    "nuvioFile": "providers/xhamster.js",
+    "baseUrl": "https://vi.xhspot.com/gay",
+    "searchTemplates": [
+      "/gay/search/%slug%",
+      "/search/%slug%"
+    ],
+    "itemSelector": "div.mobile-video-thumb, div.thumb-list__item",
+    "specialMode": "xhamster",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "XvideosGay",
+    "nuvioId": "xvideosgay",
+    "nuvioFile": "providers/xvideosgay.js",
+    "baseUrl": "https://www.xvv1deos.com",
+    "searchTemplates": [
+      "/?k=%q%"
+    ],
+    "itemSelector": "div.mozaique div.thumb-block",
+    "specialMode": "xvideos",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "iGay69",
+    "nuvioId": "igay69",
+    "nuvioFile": "providers/igay69.js",
+    "baseUrl": "https://igay69.com",
+    "searchTemplates": [
+      "/page/1/?s=%q%"
+    ],
+    "itemSelector": "article.blog-entry",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  },
+  {
+    "cloudStreamPackage": "topHDgayporn",
+    "nuvioId": "tophdgayporn",
+    "nuvioFile": "providers/tophdgayporn.js",
+    "baseUrl": "https://tophdgayporn.com",
+    "searchTemplates": [
+      "/?s=%q%"
+    ],
+    "itemSelector": "div.aiovg-item-video",
+    "specialMode": "generic",
+    "supportedTypes": [
+      "movie"
+    ]
+  }
+]
