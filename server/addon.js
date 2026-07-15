@@ -19,9 +19,9 @@ const cache = new Map();
 
 const addonManifest = {
   id: ADDON_ID,
-  version: "2.0.0",
-  name: "GayXXX Catalog",
-  description: "Browse, search, inspect and play videos from the converted GayXXX providers.",
+  version: "2.1.0",
+  name: "GayXXX Nuvio",
+  description: "Nuvio addon and native scraper repository for browsing, searching and resolving the converted GayXXX providers.",
   logo: "/logo.svg",
   resources: [
     { name: "catalog", types: ["movie"] },
@@ -456,6 +456,10 @@ async function handleRequest(req, res) {
         manifest: "/manifest.json",
         pluginRepository: "https://raw.githubusercontent.com/donatelloroberto/GayXXX-Nuvio/refs/heads/main/manifest.json"
       });
+      return;
+    }
+    if (parts.length === 1 && parts[0] === "health") {
+      json(res, 200, { ok: true, version: addonManifest.version, service: addonManifest.id }, "no-store");
       return;
     }
     if (parts.length === 1 && parts[0] === "logo.svg") {

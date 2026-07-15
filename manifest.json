@@ -1,7 +1,96 @@
 {
+  "id": "com.donatelloroberto.gayxxx",
   "name": "GayXXX Nuvio",
-  "version": "1.0.0",
-  "description": "Nuvio native local-scraper conversion of the GayXXX CloudStream builds.",
+  "description": "Nuvio addon and native scraper repository for browsing, searching and resolving the converted GayXXX providers.",
+  "version": "2.1.0",
+  "logo": "https://gay-xxx-nuvio.vercel.app/logo.svg",
+  "resources": [
+    {
+      "name": "catalog",
+      "types": [
+        "movie"
+      ]
+    },
+    {
+      "name": "meta",
+      "types": [
+        "movie"
+      ],
+      "idPrefixes": [
+        "gayxxx:"
+      ]
+    },
+    {
+      "name": "stream",
+      "types": [
+        "movie"
+      ],
+      "idPrefixes": [
+        "gayxxx:"
+      ]
+    }
+  ],
+  "types": [
+    "movie"
+  ],
+  "idPrefixes": [
+    "gayxxx:"
+  ],
+  "catalogs": [
+    {
+      "type": "movie",
+      "id": "gayxxx",
+      "name": "GayXXX",
+      "extra": [
+        {
+          "name": "search",
+          "isRequired": false
+        },
+        {
+          "name": "genre",
+          "isRequired": false,
+          "options": [
+            "BLvietsub",
+            "BestHDgayporn",
+            "BoyfriendTV",
+            "Fullboys",
+            "Fxggxt",
+            "FxggxtOrg",
+            "Eporner Gay",
+            "PornOne Gay",
+            "GVhot",
+            "G_Xtapes",
+            "GayKinkyPorn",
+            "GayStream",
+            "Gaycock4U",
+            "Gaypornhot",
+            "Gaypornvidsxxx",
+            "Gayxx (AsianGay + Boyplus)",
+            "JustTheGays",
+            "KRX18",
+            "MenXtube",
+            "Nurgay",
+            "Traingon",
+            "Gayxnow",
+            "XHamster Gay",
+            "Xvideos Gay",
+            "iGay69",
+            "topHDgayporn"
+          ]
+        },
+        {
+          "name": "skip",
+          "isRequired": false
+        }
+      ]
+    }
+  ],
+  "behaviorHints": {
+    "adult": true,
+    "configurable": false,
+    "configurationRequired": false,
+    "p2p": false
+  },
   "scrapers": [
     {
       "id": "blvietsub",

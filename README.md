@@ -1,70 +1,56 @@
 # GayXXX Nuvio
 
-This repository now supports both Nuvio extension systems:
+This repository is both:
 
-1. **Plugin repository** — the 26 converted JavaScript stream providers.
-2. **Hosted addon** — catalogs, search, metadata and stream endpoints for the original provider sites.
+1. a Nuvio addon providing catalog, search, metadata and stream endpoints; and
+2. a Nuvio native plugin repository containing 26 JavaScript scrapers.
 
-## 1. Plugin repository
+## Install as an addon
 
-Install this URL under **Settings → General → Plugin manifest URL**:
-
-```text
-https://raw.githubusercontent.com/donatelloroberto/GayXXX-Nuvio/refs/heads/main/manifest.json
-```
-
-The root `manifest.json` remains the plugin repository manifest so existing installations continue to work.
-
-## 2. Catalog/search addon
-
-The addon must run on a Node.js host because catalog and stream responses are generated dynamically. Deploy this repository to Vercel, then install the deployment URL under **Addons**:
+Add this URL in **Nuvio → Addons**:
 
 ```text
-https://YOUR-PROJECT.vercel.app/manifest.json
+https://gay-xxx-nuvio.vercel.app/manifest.json
 ```
 
-The hosted addon provides:
+## Install as a plugin repository
+
+Add the same URL in **Settings → General → Plugin manifest URL**:
 
 ```text
-/manifest.json
-/catalog/movie/gayxxx.json
-/catalog/movie/gayxxx/search=<query>.json
-/catalog/movie/gayxxx/genre=<provider>.json
-/meta/movie/gayxxx:<provider>:<payload>.json
-/stream/movie/gayxxx:<provider>:<payload>.json
+https://gay-xxx-nuvio.vercel.app/manifest.json
 ```
 
-### Vercel deployment
+The manifest intentionally contains both the addon contract and the `scrapers` registry. Each Nuvio parser ignores fields that do not belong to its subsystem.
 
-1. Import `donatelloroberto/GayXXX-Nuvio` in Vercel.
-2. Keep the framework preset as **Other**.
-3. Deploy without a build command.
-4. Copy the resulting `/manifest.json` URL into Nuvio's **Addons** page.
+## Required live checks
 
-`vercel.json` routes all addon API requests to `api/index.js`. The raw GitHub plugin manifest is unaffected.
+After every Vercel deployment, these URLs must return HTTP 200:
 
-## Local test
+```text
+https://gay-xxx-nuvio.vercel.app/health
+https://gay-xxx-nuvio.vercel.app/manifest.json
+https://gay-xxx-nuvio.vercel.app/catalog/movie/gayxxx.json
+```
+
+Expected health response:
+
+```json
+{"ok":true,"version":"2.1.0","service":"com.donatelloroberto.gayxxx"}
+```
+
+## Runtime
+
+- Node.js is pinned to `22.x` for stable Vercel dependency installation.
+- `manifest.json` is a static hybrid manifest.
+- `/catalog`, `/meta`, `/stream`, `/health`, `/logo.svg`, and `/` are routed to `api/index.js`.
+- Provider scripts remain available under `/providers/*.js`.
+
+## Validation
 
 ```bash
-npm install
+npm ci
 npm test
-npm start
 ```
 
-Then install:
-
-```text
-http://127.0.0.1:7000/manifest.json
-```
-
-## How browsing works
-
-- The combined **GayXXX** catalog queries the actual provider sites rather than TMDB.
-- The catalog supports search, provider filtering through the genre selector, and pagination.
-- Catalog IDs contain the source provider and page URL.
-- Metadata is extracted from the source page.
-- Playback uses the corresponding converted provider's direct-link resolver and passes required Referer/User-Agent headers through `behaviorHints.proxyHeaders`.
-
-## Notes
-
-Some sites may require a VPN, may block datacenter IP addresses, or may change their HTML. Failed providers are skipped so one unavailable site does not prevent other catalog results from loading.
+The tests validate all 26 plugin entries, execute every provider with fixture HTTP responses, and verify addon catalog/meta/stream behavior.
