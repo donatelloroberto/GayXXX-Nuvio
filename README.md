@@ -1,59 +1,70 @@
-# GayXXX Nuvio Repository
+# GayXXX Nuvio
 
-A native Nuvio local-scraper repository converted from the supplied GayXXX CloudStream build archive.
+This repository now supports both Nuvio extension systems:
 
-## Install
+1. **Plugin repository** — the 26 converted JavaScript stream providers.
+2. **Hosted addon** — catalogs, search, metadata and stream endpoints for the original provider sites.
 
-Host this folder in a public GitHub repository, then add either the repository URL or its raw manifest URL in Nuvio:
+## 1. Plugin repository
+
+Install this URL under **Settings → General → Plugin manifest URL**:
 
 ```text
-https://raw.githubusercontent.com/<owner>/<repo>/main/manifest.json
+https://raw.githubusercontent.com/donatelloroberto/GayXXX-Nuvio/refs/heads/main/manifest.json
 ```
 
-The manifest registers 26 standalone JavaScript scrapers under `providers/`.
+The root `manifest.json` remains the plugin repository manifest so existing installations continue to work.
 
-## Runtime contract
+## 2. Catalog/search addon
 
-Each scraper exports:
+The addon must run on a Node.js host because catalog and stream responses are generated dynamically. Deploy this repository to Vercel, then install the deployment URL under **Addons**:
 
-```javascript
-module.exports = {
-  getStreams(tmdbId, mediaType, season, episode),
-  scrape(metadata)
-};
+```text
+https://YOUR-PROJECT.vercel.app/manifest.json
 ```
 
-The files are self-contained and only require the module supported by current Nuvio runtimes:
+The hosted addon provides:
 
-```javascript
-require("cheerio-without-node-native")
+```text
+/manifest.json
+/catalog/movie/gayxxx.json
+/catalog/movie/gayxxx/search=<query>.json
+/catalog/movie/gayxxx/genre=<provider>.json
+/meta/movie/gayxxx:<provider>:<payload>.json
+/stream/movie/gayxxx:<provider>:<payload>.json
 ```
 
-## Conversion behavior
+### Vercel deployment
 
-1. Nuvio supplies a TMDB ID for the selected movie or TV title.
-2. The scraper gets its title/year from TMDB.
-3. It uses the original CloudStream provider's search path and item selector.
-4. It resolves direct MP4/M3U8/MKV/WebM links, JSON-LD sources, embedded state, iframe players, download links, and common script patterns.
-5. Site-specific paths are included for Eporner, KRX18, Nurgay, BoyfriendTV, XHamster, and Xvideos-style pages.
+1. Import `donatelloroberto/GayXXX-Nuvio` in Vercel.
+2. Keep the framework preset as **Other**.
+3. Deploy without a build command.
+4. Copy the resulting `/manifest.json` URL into Nuvio's **Addons** page.
 
-## Validation
+`vercel.json` routes all addon API requests to `api/index.js`. The raw GitHub plugin manifest is unaffected.
+
+## Local test
 
 ```bash
-node tools/validate.mjs
+npm install
+npm test
+npm start
 ```
 
-For the fixture smoke test:
+Then install:
 
-```bash
-npm install --no-save cheerio-without-node-native
-node tools/smoke-test.mjs
+```text
+http://127.0.0.1:7000/manifest.json
 ```
 
-## Important model difference
+## How browsing works
 
-CloudStream providers can publish their own browse/search catalogs. Nuvio native local scrapers are stream providers invoked for a selected metadata title. Therefore this repository preserves source searching and stream resolution, but it cannot recreate the original CloudStream home-page catalogs through `manifest.json` alone. A catalog requires a separate HTTP/Stremio-compatible addon service.
+- The combined **GayXXX** catalog queries the actual provider sites rather than TMDB.
+- The catalog supports search, provider filtering through the genre selector, and pagination.
+- Catalog IDs contain the source provider and page URL.
+- Metadata is extracted from the source page.
+- Playback uses the corresponding converted provider's direct-link resolver and passes required Referer/User-Agent headers through `behaviorHints.proxyHeaders`.
 
-## Maintenance
+## Notes
 
-The source sites can change HTML, domains, or anti-bot behavior. Update the corresponding entry in `docs/conversion-map.json` and its provider file when that happens.
+Some sites may require a VPN, may block datacenter IP addresses, or may change their HTML. Failed providers are skipped so one unavailable site does not prevent other catalog results from loading.
