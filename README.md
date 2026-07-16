@@ -37,6 +37,8 @@ Deploy the repository as one Vercel project:
 vercel deploy
 ```
 
+The committed `vercel.json` pins Node.js 24, uses `public` as the non-empty build output directory, and forwards every public route to the shared serverless API while preserving the provider path.
+
 Every manifest is then available at:
 
 ```text

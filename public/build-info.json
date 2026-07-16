@@ -1,0 +1,5 @@
+{
+  "name": "GayXXX Individual Stremio Addons",
+  "runtime": "Vercel Functions",
+  "entrypoint": "/api/index"
+}

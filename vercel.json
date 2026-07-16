@@ -1,9 +1,10 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": null,
+  "outputDirectory": "public",
   "installCommand": "npm install --ignore-scripts --no-audit --no-fund --omit=optional --registry=https://registry.npmjs.org/",
   "functions": { "api/index.js": { "maxDuration": 60 } },
   "rewrites": [
-    { "source": "/:path*", "destination": "/api/index" }
+    { "source": "/:path*", "destination": "/api/index?route=:path*" }
   ]
 }
-

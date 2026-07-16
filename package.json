@@ -5,7 +5,7 @@
   "description": "Independent Stremio addons derived from the GayXXX provider implementations.",
   "type": "commonjs",
   "workspaces": ["addons/*"],
-  "engines": { "node": ">=20" },
+  "engines": { "node": "24.x" },
   "scripts": {
     "generate": "node tools/generate-workspaces.mjs",
     "build": "node tools/build-addon.mjs",
