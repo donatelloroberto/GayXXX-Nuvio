@@ -1,13 +1,13 @@
 /*
  * Gayxx (AsianGay + Boyplus) — Nuvio local scraper
  * Converted from the CloudStream package Gayxx.
- * Original source domain: https://gayxx.net
+ * Current source domains: https://asiangaysex.net and https://boyplus.net
  * Contract: module.exports.getStreams(tmdbId, mediaType, season, episode)
  * Runtime dependencies: Nuvio fetch shim + cheerio-without-node-native.
  */
 var cheerio = require("cheerio-without-node-native");
 
-var CONFIG = {"id":"gayxx","name":"Gayxx (AsianGay + Boyplus)","baseUrl":"https://gayxx.net","origin":"https://gayxx.net","searchTemplates":["https://gayxx.net/?s=%q%"],"itemSelector":"article, div.item, div.video-item, div.thumb-block","mode":"generic","supportedTypes":["movie"]};
+var CONFIG = {"id":"gayxx","name":"Gayxx (AsianGay + Boyplus)","baseUrl":"https://asiangaysex.net","origin":"https://asiangaysex.net","searchTemplates":["https://asiangaysex.net/?s=%q%","https://boyplus.net/search/%slug%/"],"itemSelector":"article.uim-home-card, div.uim-home-thumb, #list_videos_common_videos_list div.item","mode":"generic","supportedTypes":["movie"]};
 var TMDB_API_KEY = process.env.TMDB_API_KEY || "";
 var UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36";
 var DEFAULT_HEADERS = {

@@ -1,0 +1,18 @@
+[build]
+  command = "npm run build"
+  publish = "public"
+
+[build.environment]
+  NODE_VERSION = "24"
+  NPM_VERSION = "10.9.4"
+  NPM_FLAGS = "--ignore-scripts --no-audit --no-fund --omit=optional"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  external_node_modules = ["cheerio-without-node-native"]
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/index?route=:splat"
+  status = 200

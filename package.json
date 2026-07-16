@@ -15,6 +15,5 @@
     "start": "node packages/shared/directory-server.js",
     "dev": "node packages/shared/directory-server.js"
   },
-  "dependencies": { "cheerio-without-node-native": "0.20.2" },
-  "packageManager": "npm@10.9.4"
+  "dependencies": { "cheerio-without-node-native": "0.20.2" }
 }

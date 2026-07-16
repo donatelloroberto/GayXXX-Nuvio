@@ -208,23 +208,24 @@ const providers = [
   {
     "id": "gayxx",
     "name": "Gayxx",
-    "baseUrl": "https://gayxx.net",
-    "origin": "https://gayxx.net",
+    "baseUrl": "https://asiangaysex.net",
+    "origin": "https://asiangaysex.net",
     "homeUrls": [
-      "https://gayxx.net/2025/08",
-      "https://gayxx.net/"
+      "https://asiangaysex.net/",
+      "https://boyplus.net/latest-updates"
     ],
     "searchTemplates": [
-      "https://gayxx.net/?s=%q%"
+      "https://asiangaysex.net/?s=%q%",
+      "https://boyplus.net/search/%slug%/"
     ],
-    "itemSelector": "article, div.item, div.video-item, div.thumb-block",
+    "itemSelector": "article.uim-home-card, div.uim-home-thumb, #list_videos_common_videos_list div.item",
     "mode": "generic",
     "supportedTypes": [
       "movie"
     ],
     "filename": "providers/gayxx.js",
     "description": "Gayxx has the hottest gay porn. Free gay porn videos, huge collection of free gay porno movies. New gay men twink sex porn tube vids delivered to you everyday",
-    "logo": "https://gayxx.net/wp-content/uploads/2026/03/cropped-watermark_video_2-Copy.png",
+    "logo": "https://asiangaysex.net/favicon.ico",
     "language": "vi"
   },
   {
@@ -284,11 +285,11 @@ const providers = [
   {
     "id": "gxtapes",
     "name": "G_Xtapes",
-    "baseUrl": "https://gay.xtapes.in",
-    "origin": "https://gay.xtapes.in",
+    "baseUrl": "https://gay.xtapes.tw",
+    "origin": "https://gay.xtapes.tw",
     "homeUrls": [
-      "https://gay.xtapes.in/?filtre=date&cat=0",
-      "https://gay.xtapes.in/"
+      "https://gay.xtapes.tw/?filtre=date&cat=0",
+      "https://gay.xtapes.tw/category/porn-movies-214660"
     ],
     "searchTemplates": [
       "/page/1/?s=%q%"
@@ -300,7 +301,7 @@ const providers = [
     ],
     "filename": "providers/gxtapes.js",
     "description": "Xtapes is the best free full length porn video site. Choose from millions of hardcore videos that stream quickly and in high quality and only full length",
-    "logo": "https://gay.xtapes.in/wp-content/uploads/logo6.png",
+    "logo": "https://gay.xtapes.tw/wp-content/uploads/logo6.png",
     "language": "en"
   },
   {
@@ -360,19 +361,19 @@ const providers = [
   {
     "id": "menxtube",
     "name": "MenXtube",
-    "baseUrl": "https://www.menxtube.com",
-    "origin": "https://www.menxtube.com",
+    "baseUrl": "https://gayxfans.com",
+    "origin": "https://gayxfans.com",
     "searchTemplates": [
       "/search/?q=%q%"
     ],
-    "itemSelector": "div.list-videos div.item",
+    "itemSelector": "div.thumb-video.item",
     "mode": "generic",
     "supportedTypes": [
       "movie"
     ],
     "filename": "providers/menxtube.js",
     "description": "MenXtube is the best free full length porn video site. Choose from millions of hardcore videos that stream quickly and in high quality and only full length",
-    "logo": "https://menxtube.com/contents/hutsedarcwon/theme/logo.png",
+    "logo": "https://gayxfans.com/contents/opurzvoqvikh/theme/logo.png",
     "language": "en"
   },
   {
@@ -547,7 +548,8 @@ const providers = [
   }
 ];
 
-module.exports = providers.map((provider) => ({
-  ...provider,
-  ...(sourceSpecs[provider.id] || {})
-}));
+module.exports = providers.map((provider) => {
+  const merged = { ...provider, ...(sourceSpecs[provider.id] || {}) };
+  if (merged.readerCatalogFallback && merged.readerFallback == null) merged.readerFallback = true;
+  return merged;
+});

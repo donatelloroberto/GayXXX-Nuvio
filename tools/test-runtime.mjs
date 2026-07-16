@@ -70,6 +70,7 @@ assert.equal(parsedMeta.runtime, "62 min");
 
 const nurgay = configs.find((item) => item.id === "nurgay");
 assert.equal(nurgay.streamStrategy, "mirror-menu");
+assert.equal(nurgay.readerCatalogFallback, true);
 const gaystream = configs.find((item) => item.id === "gaystream");
 assert.deepEqual(gaystream.searchTemplates, ["/?s=%q%&page=1", "/?s=%q%&page=2"]);
 assert.equal(gaystream.streamStrategy, "tabs-buttons");
@@ -81,6 +82,26 @@ const nurgayMeta = nurgayAddon.parseMetaPage(nurgay, "https://nurgay.to/fixture-
 `, "Nurgay Fixture");
 assert.equal(nurgayMeta.poster, "https://nurgay.to/wp-content/uploads/poster.jpg");
 assert.equal(nurgayMeta.runtime, "130 min");
+
+const gayxx = configs.find((item) => item.id === "gayxx");
+const gxtapes = configs.find((item) => item.id === "gxtapes");
+const menxtube = configs.find((item) => item.id === "menxtube");
+assert.equal(gayxx.baseUrl, "https://asiangaysex.net", "Gayxx must follow the current CloudStream artifact domain");
+assert.ok(gayxx.allowedHosts.includes("https://boyplus.net"));
+assert.equal(gxtapes.baseUrl, "https://gay.xtapes.tw", "GXtapes must follow the current CloudStream artifact domain");
+assert.ok(gxtapes.allowedHosts.includes("https://gayxtapes.tw"), "GXtapes must accept its canonical redirect host");
+assert.equal(gxtapes.readerFallback, true, "catalog reader recovery must also cover detail pages");
+assert.equal(menxtube.baseUrl, "https://gayxfans.com", "MenXtube must follow its current canonical redirect");
+assert.equal(menxtube.readerFallback, true);
+assert.equal(menxtube.itemSelector, "div.thumb-video.item");
+
+const xhamster = configs.find((item) => item.id === "xhamster");
+const xhamsterAddon = createProviderAddon(xhamster.id);
+const xhamsterItems = xhamsterAddon.parseCatalogPage(xhamster, `
+  <script id="initials-script">window.initials={"layoutPage":{"videoListProps":{"videoThumbProps":[{"id":123,"title":"Initials fixture","pageURL":"https://vi.xhspot.com/videos/xhFixture","thumbURL":"https://img.example/xh.webp"}]}}};</script>
+`, xhamster.baseUrl);
+assert.equal(xhamsterItems.length, 1, "Xhamster catalog must parse its current initials JSON payload");
+assert.equal(xhamsterItems[0].poster, "https://img.example/xh.webp");
 
 const decorated = gaycockAddon.decoratePosterFields(parsedMeta, "https://addon.example");
 assert.match(decorated.poster, /^https:\/\/addon\.example\/gaycock4u\/poster\//);
@@ -158,6 +179,32 @@ try {
     "https://media.example/mirror-360.mp4"
   ]));
   assert.ok(!fetchedUrls.some((url) => url.includes("bsky.app")), "social links must not be probed as video players");
+} finally {
+  global.fetch = originalFetch;
+}
+
+const readerCatalogRequests = [];
+global.fetch = async (url, options = {}) => {
+  const target = String(url);
+  readerCatalogRequests.push({ target, headers: new Headers(options.headers || {}) });
+  if (target.startsWith("https://www.eporner.com/cat/gay/")) {
+    return new Response("<html><title>Consent</title></html>", { status: 200, headers: { "Content-Type": "text/html" } });
+  }
+  if (target.startsWith("https://r.jina.ai/http://www.eporner.com/cat/gay/")) {
+    return new Response(`
+      <div id="div-search-results"><div class="mb"><div class="mbcontent"><a href="https://www.eporner.com/video-AB12CD34/reader-fixture/"><img src="https://img.example/reader.jpg"></a></div><div class="mbunder"><p class="mbtit"><a>Reader fixture</a></p></div></div></div>
+    `, { status: 200, headers: { "Content-Type": "text/html" } });
+  }
+  throw new Error("unexpected reader catalog fixture URL: " + target);
+};
+try {
+  const recovered = await createProviderAddon("geporner").getCatalog({}, "reader-catalog-test");
+  assert.equal(recovered.metas.length, 1, "an unparseable 200 response must retry through the catalog reader");
+  assert.equal(recovered.metas[0].name, "Reader fixture");
+  for (const request of readerCatalogRequests.filter((item) => item.target.startsWith("https://r.jina.ai/"))) {
+    assert.equal(request.headers.get("user-agent"), null, "reader requests must not send the upstream browser fingerprint");
+    assert.equal(request.headers.get("referer"), null, "reader requests must not send a synthetic reader referer");
+  }
 } finally {
   global.fetch = originalFetch;
 }
@@ -267,8 +314,10 @@ try {
   global.fetch = originalFetch;
 }
 
-global.fetch = async (url) => {
+const nurgayReaderRequests = [];
+global.fetch = async (url, options = {}) => {
   const target = String(url);
+  if (target.startsWith("https://r.jina.ai/")) nurgayReaderRequests.push(new Headers(options.headers || {}));
   if (target.startsWith("https://nurgay.to/?filter=")) {
     return new Response("blocked", { status: 403, headers: { "Content-Type": "text/html" } });
   }
@@ -304,6 +353,12 @@ try {
   assert.equal(meta.meta.poster, "https://nurgay.to/poster.jpg");
   const streams = await extractStreams(nurgay, "https://nurgay.to/bel-ami-xl-files-2/", "nurgay-runtime-test");
   assert.deepEqual(streams.map((item) => item.url), ["https://media.example/nurgay-720.mp4"]);
+  assert.ok(nurgayReaderRequests.length >= 2);
+  for (const headers of nurgayReaderRequests) {
+    assert.equal(headers.get("user-agent"), null);
+    assert.equal(headers.get("accept-language"), null);
+    assert.equal(headers.get("referer"), null);
+  }
 } finally {
   global.fetch = originalFetch;
 }

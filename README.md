@@ -15,6 +15,7 @@ No provider represented by the former repository was omitted. The CloudStremio-C
 - `addons/<provider>/`: independent npm workspace and provider documentation
 - `packages/shared/`: Stremio runtime, provider registry, configurations, and extractors
 - `api/`: shared Vercel entry point
+- `netlify/functions/`: Netlify Functions adapter for the same application
 - `tools/`: deterministic fixture tests, workspace generation, and build validation
 
 ## Development
@@ -38,6 +39,8 @@ vercel deploy
 ```
 
 The committed `vercel.json` pins Node.js 24, uses `public` as the non-empty build output directory, and forwards every public route to the shared serverless API while preserving the provider path.
+
+For Netlify, import the same repository and leave the base directory empty. The committed `netlify.toml` supplies the build command (`npm run build`), publish directory (`public`), Node/npm versions, Functions directory, and the catch-all rewrite to the shared handler. No Corepack setup is required.
 
 Every manifest is then available at:
 
@@ -68,7 +71,7 @@ https://DEPLOYED-HOST/diagnostics.json
 https://DEPLOYED-HOST/diagnostics.json?provider=fxggxt&stage=stream&limit=50
 ```
 
-The GUI footer links to the same endpoint. This recent window is intentionally bounded and resets when a Vercel function instance is recycled. The identical JSON event is written to Vercel Runtime Logs with `service=stremio-provider-diagnostics`; use the Vercel project log view for the retained record. URLs are reduced to their hostname and common tokens, cookies, authorization values, and API keys are redacted.
+The GUI footer links to the same endpoint. This recent window is intentionally bounded and resets when a serverless function instance is recycled. The identical JSON event is written to the hosting runtime logs with `service=stremio-provider-diagnostics`; use the Vercel or Netlify log view for the retained record. URLs are reduced to their hostname and common tokens, cookies, authorization values, and API keys are redacted.
 
 Common reason codes are `UPSTREAM_FETCH_FAILED`, `HTTP_FAILURE`, `TIMEOUT`, `CHALLENGE_OR_UNAVAILABLE`, `READER_FALLBACK_USED`, `NO_ITEMS_PARSED`, `FALLBACK_METADATA`, `POSTER_PROXY_FAILED`, `NO_PLAYABLE_URLS`, `EXTRACTOR_ERROR`, and `EMPTY_STREAMS`.
 

@@ -70,6 +70,7 @@ module.exports = {
     searchTemplates: ["/?s=%q%", "/page/2/?s=%q%"],
     itemSelector: "article.loop-video.thumb-block, article.loop-video",
     card: { title: "header.entry-header span", link: "a[href]", poster: ".post-thumbnail-container img, img", posterAttributes: ["data-main-thumb", "data-src", "src"] },
+    readerCatalogFallback: true,
     streamStrategy: "responsive-iframe"
   },
   gaypornhot: {
@@ -97,10 +98,14 @@ module.exports = {
   },
   gayxx: {
     sourceFamily: "gayvn-blx",
-    homeUrls: ["https://gayxx.net/2025/08/page/1/", "https://gayxx.net/"],
-    searchTemplates: ["/?s=%q%", "/page/2/?s=%q%"],
-    itemSelector: "div.videopost",
-    card: { title: "a[title]", titleAttribute: "title", link: "a[href]", poster: "img", posterAttributes: ["data-src", "src"] },
+    baseUrl: "https://asiangaysex.net",
+    origin: "https://asiangaysex.net",
+    homeUrls: ["https://asiangaysex.net/", "https://boyplus.net/latest-updates"],
+    searchTemplates: ["/?s=%q%", "https://boyplus.net/?s=%q%"],
+    itemSelector: "article.uim-home-card, div.uim-home-thumb, #list_videos_common_videos_list div.item",
+    card: { title: "h3.post-title a, strong.title, a[title]", link: "a[href]", poster: "img.thumb, img", posterAttributes: ["data-original", "data-src", "src"] },
+    allowedHosts: ["https://boyplus.net"],
+    readerCatalogFallback: true,
     streamStrategy: "iframes"
   },
   geporner: {
@@ -109,6 +114,7 @@ module.exports = {
     searchTemplates: ["/search/%slug%/1", "/search/%slug%/2"],
     itemSelector: "#div-search-results div.mb, div.mb",
     card: { title: "div.mbunder p.mbtit a", link: "div.mbcontent a[href], a[href]", poster: "img", posterAttributes: ["data-src", "src"] },
+    readerCatalogFallback: true,
     streamStrategy: "eporner"
   },
   gpornone: {
@@ -129,9 +135,14 @@ module.exports = {
   },
   gxtapes: {
     sourceFamily: "gayvn",
+    baseUrl: "https://gay.xtapes.tw",
+    origin: "https://gay.xtapes.tw",
+    homeUrls: ["https://gay.xtapes.tw/?filtre=date&cat=0", "https://gay.xtapes.tw/category/porn-movies-214660"],
     searchTemplates: ["/page/1/?s=%q%", "/page/2/?s=%q%"],
     itemSelector: "ul.listing-tube li",
     card: { title: "img[title]", titleAttribute: "title", link: "a[href]", poster: "img", posterAttributes: ["src", "data-src"] },
+    allowedHosts: ["https://gayxtapes.tw"],
+    readerCatalogFallback: true,
     streamStrategy: "video-code"
   },
   igay69: {
@@ -148,6 +159,7 @@ module.exports = {
     itemSelector: "article.video-card",
     card: { title: "h3.card-title", link: "a[href]", poster: "div.art-poster", posterAttributes: ["style"] },
     requestHeaders: { "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/147.0.0.0 Safari/537.36" },
+    readerCatalogFallback: true,
     streamStrategy: "encoded-servers"
   },
   jayboys: {
@@ -157,6 +169,7 @@ module.exports = {
     itemSelector: "div.list-item div.video.col-2",
     card: { title: "a.denomination span.title", link: "a.thumb-video[href]", poster: "a.thumb-video img", posterAttributes: ["data-src", "src"] },
     requestHeaders: { "User-Agent": FIREFOX_139 },
+    readerCatalogFallback: true,
     streamStrategy: "player-data-src"
   },
   justthegays: {
@@ -166,6 +179,7 @@ module.exports = {
     itemSelector: "div.col-xl-4",
     card: { title: "h3.post-title a", link: "div.item-img a[href]", poster: "div.item-img img", posterAttributes: ["data-src", "data-lazy-src", "src"] },
     requestHeaders: { "User-Agent": FIREFOX_139, Cookie: "hasVisited=1; accessAgeDisclaimerPH=1" },
+    readerCatalogFallback: true,
     streamStrategy: "aiovg"
   },
   krx18: {
@@ -173,14 +187,18 @@ module.exports = {
     searchTemplates: ["/search/videos?search_query=%q%"],
     itemSelector: "#archive-content article, div.items.normal article, div.card.border-0",
     card: { title: "h2, h3, .title", link: "a[href]", poster: "img", posterAttributes: ["data-src", "src"] },
+    readerCatalogFallback: true,
     streamStrategy: "wordpress-players"
   },
   menxtube: {
     sourceFamily: "blx",
-    homeUrls: ["https://www.menxtube.com/latest-updates/", "https://www.menxtube.com/most-popular/"],
+    baseUrl: "https://gayxfans.com",
+    origin: "https://gayxfans.com",
+    homeUrls: ["https://gayxfans.com/", "https://gayxfans.com/latest-updates/"],
     searchTemplates: ["/search/?q=%q%"],
-    itemSelector: "div.list-videos div.item",
-    card: { title: "strong.title", link: "a[href]", poster: "img.thumb, img", posterAttributes: ["data-webp", "data-src", "src"] },
+    itemSelector: "div.thumb-video.item",
+    card: { title: "div.title", link: "a[href]", poster: "img", posterAttributes: ["data-webp", "data-original", "data-src", "src"] },
+    readerCatalogFallback: true,
     streamStrategy: "flashvars"
   },
   nurgay: {
@@ -188,6 +206,7 @@ module.exports = {
     searchTemplates: ["/?s=%q%&page=1", "/?s=%q%&page=2"],
     itemSelector: "article.loop-video",
     card: { title: "header.entry-header span", link: "a[href]", poster: "img", posterAttributes: ["data-src", "src"] },
+    readerCatalogFallback: true,
     streamStrategy: "mirror-menu"
   },
   pinoymoviepedia: {
@@ -196,6 +215,7 @@ module.exports = {
     searchTemplates: ["/search/%slug%"],
     itemSelector: "div.items.normal article, div#archive-content article, div.items.full article",
     card: { title: "div.data h3 a, h3 > a", link: "div.poster a[href], div.data h3 a[href], a[href]", poster: "div.poster img, img", posterAttributes: ["data-wpfc-original-src", "data-lazy-src", "data-src", "srcset", "src"] },
+    readerCatalogFallback: true,
     streamStrategy: "pframe-iframes"
   },
   tophdgayporn: {
@@ -213,6 +233,7 @@ module.exports = {
     searchTemplates: ["/search?q=%q%"],
     itemSelector: "a.card",
     card: { title: ".card-title", linkAttribute: "href", poster: ".card-thumb img, img", posterAttributes: ["data-poster", "data-src", "src"] },
+    readerCatalogFallback: true,
     streamStrategy: "traingon"
   },
   videosxgays: {
@@ -229,6 +250,7 @@ module.exports = {
     searchTemplates: ["/gay/search/%slug%"],
     itemSelector: "div.mobile-video-thumb",
     card: { title: "a.mobile-video-thumb__name", link: "a.mobile-video-thumb__name[href], a.thumb-image-container[href]", poster: "a.thumb-image-container img", posterAttributes: ["srcset", "src"] },
+    readerCatalogFallback: true,
     streamStrategy: "xhamster-initials"
   },
   xvideosgay: {
@@ -237,6 +259,7 @@ module.exports = {
     searchTemplates: ["/?k=%q%"],
     itemSelector: "div.mozaique div.thumb-block",
     card: { title: "p.title a", link: "p.title a[href], a[href]", poster: "div.thumb a img, img", posterAttributes: ["data-src", "src"] },
+    readerCatalogFallback: true,
     streamStrategy: "xvideos"
   }
 };

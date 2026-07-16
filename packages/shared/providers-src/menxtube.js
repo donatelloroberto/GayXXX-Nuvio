@@ -1,13 +1,13 @@
 /*
  * MenXtube — Nuvio local scraper
  * Converted from the CloudStream package MenXtube.
- * Original source domain: https://www.menxtube.com
+ * Current source domain: https://gayxfans.com (the former MenXtube host redirects here)
  * Contract: module.exports.getStreams(tmdbId, mediaType, season, episode)
  * Runtime dependencies: Nuvio fetch shim + cheerio-without-node-native.
  */
 var cheerio = require("cheerio-without-node-native");
 
-var CONFIG = {"id":"menxtube","name":"MenXtube","baseUrl":"https://www.menxtube.com","origin":"https://www.menxtube.com","searchTemplates":["/search/?q=%q%"],"itemSelector":"div.list-videos div.item","mode":"generic","supportedTypes":["movie"]};
+var CONFIG = {"id":"menxtube","name":"MenXtube","baseUrl":"https://gayxfans.com","origin":"https://gayxfans.com","searchTemplates":["/search/?q=%q%"],"itemSelector":"div.thumb-video.item","mode":"generic","supportedTypes":["movie"]};
 var TMDB_API_KEY = process.env.TMDB_API_KEY || "";
 var UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36";
 var DEFAULT_HEADERS = {

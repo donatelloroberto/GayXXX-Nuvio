@@ -6,6 +6,7 @@ const require = createRequire(import.meta.url);
 const configs = require("../packages/shared/provider-configs");
 const { renderDirectoryPage } = require("../packages/shared/directory-page");
 const { restoreRewrittenPath } = require("../api/index");
+const netlify = require("../netlify/functions/index");
 const addonTestPath = fileURLToPath(new URL("./test-addon.mjs", import.meta.url));
 const manifests = configs.map((config) => require("../packages/shared/addon").createProviderAddon(config.id).addonManifest);
 if (new Set(manifests.map((item) => item.id)).size !== manifests.length) throw new Error("Duplicate manifest ids");
@@ -24,6 +25,17 @@ if (!rewrittenCatalog.url.startsWith("/gxtapes/catalog/")) throw new Error("Verc
 const vercelConfig = require("../vercel.json");
 if (vercelConfig.rewrites[0].source !== "/" || vercelConfig.rewrites[0].destination !== "/api/index?route=") {
   throw new Error("Vercel root GUI rewrite is missing");
+}
+if (netlify.requestUrl({ queryStringParameters: { route: "gxtapes/manifest.json" } }) !== "/gxtapes/manifest.json") {
+  throw new Error("Netlify route restoration is missing");
+}
+const netlifyRoot = await netlify.handler({
+  httpMethod: "GET",
+  headers: { host: "fixture.netlify.app", "x-forwarded-proto": "https" },
+  queryStringParameters: { route: "" }
+});
+if (netlifyRoot.statusCode !== 200 || !netlifyRoot.body.includes("GayXXX Stremio Addons")) {
+  throw new Error("Netlify root GUI function is missing");
 }
 const runtimeTestPath = fileURLToPath(new URL("./test-runtime.mjs", import.meta.url));
 const runtime = spawnSync(process.execPath, [runtimeTestPath], {

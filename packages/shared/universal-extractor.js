@@ -59,9 +59,11 @@ async function fetchText(url, referer, providerId, requestId, options = {}) {
       redirect: "follow",
       signal: AbortSignal.timeout(options.timeoutMs || TIMEOUT_MS),
       headers: {
-        "User-Agent": UA,
-        Accept: "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.8",
+        ...(options.minimalHeaders ? {} : {
+          "User-Agent": UA,
+          Accept: "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
+          "Accept-Language": "en-US,en;q=0.8"
+        }),
         ...(referer ? { Referer: referer } : {}),
         ...(options.headers || {})
       }
@@ -108,8 +110,9 @@ async function fetchSourcePage(config, pageUrl, requestId) {
   }
   if (!config.readerFallback) throw directError;
   const started = Date.now();
-  const page = await fetchText(readerUrl(pageUrl), "https://r.jina.ai/", config.id, requestId, {
+  const page = await fetchText(readerUrl(pageUrl), "", config.id, requestId, {
     timeoutMs: READER_TIMEOUT_MS,
+    minimalHeaders: true,
     headers: { "X-Return-Format": "html", "X-No-Cache": "true" }
   });
   if (isChallengePage(page.text)) throw new Error("Reader returned an unavailable page");
@@ -391,8 +394,15 @@ function collect(html, pageUrl, found, embeds) {
 }
 
 function playerHtmlForConfig(config, html) {
-  if (config.streamStrategy !== "mirror-menu") return html;
   const $ = cheerio.load(html || "");
+  if (config.streamStrategy === "flashvars") {
+    const playerScripts = $("script").filter((_, element) => /(?:var\s+flashvars|video_url2?\s*:)/i.test($(element).html() || ""));
+    return [
+      playerScripts.map((_, element) => $.html(element)).get().join("\n"),
+      $.html($("a.download-link[href]").closest("li"))
+    ].filter(Boolean).join("\n");
+  }
+  if (config.streamStrategy !== "mirror-menu") return html;
   const article = $("article[itemprop='video'], article.single-video, main article").first();
   const root = article.length ? article : $("main").first();
   return [
@@ -436,7 +446,9 @@ async function extractStreams(config, pageUrl, requestId) {
     await resolveWordPressPlayers(page.text, page.finalUrl, found, embeds, context);
     const output = Array.from(found, ([mediaUrl, info]) => stream(mediaUrl, info.referer, config.name, info.label, context.requestHeaders));
     for (const embed of Array.from(embeds).slice(0, 12)) output.push(...await resolveEmbed(embed, page.finalUrl, 0, new Set(), context));
-    const unique = Array.from(new Map(output.filter((item) => item?.url).map((item) => [item.url, item])).values());
+    let unique = Array.from(new Map(output.filter((item) => item?.url).map((item) => [item.url, item])).values());
+    const nonPreview = unique.filter((item) => !/(?:preview|trailer|\/timelines?\/)/i.test(item.url));
+    if (nonPreview.length) unique = nonPreview;
     if (!unique.length) recordDiagnostic({ level: "warn", provider: config.id, stage: "stream", code: "NO_PLAYABLE_URLS", message: `No direct media in page or ${embeds.size} embeds`, url: pageUrl, durationMs: Date.now() - started, requestId });
     return unique;
   } catch (error) {

@@ -20,6 +20,9 @@ The Gayvn Kotlin sources were used where available. For BLx-only providers, rout
 5. Poster URLs requiring a Referer were handed directly to Stremio, so hotlink protection produced blank artwork.
 6. Timeout handling attempted to assign to the read-only `code` property of a DOMException, masking the actual upstream timeout with `Cannot set property code ... which has only a getter`.
 7. The deployed server and CloudStream app do not have the same network identity. Many adult origins return an identical 195-byte `Site Unavailable` page to datacenter requests even when parsing is correct.
+8. The rendered-reader fallback inherited browser `User-Agent`, `Accept`, `Accept-Language`, and `Referer` headers. The reader endpoint rejects that header combination with HTTP 403; minimal reader-specific headers return the rendered origin HTML.
+9. Some direct requests returned HTTP 200 with unusable markup. Fallback previously ran only on non-2xx responses, so a misleading 200 response prevented recovery.
+10. Current compiled artifacts and redirects moved Gayxx to `asiangaysex.net`/`boyplus.net`, GXtapes to `gay.xtapes.tw` (canonical links use `gayxtapes.tw`), and MenXtube to `gayxfans.com`.
 
 ## Source-faithful behavior now implemented
 
@@ -36,7 +39,7 @@ The Gayvn Kotlin sources were used where available. For BLx-only providers, rout
 | GXtapes | `ul.listing-tube li` | `#video-code iframe` plus 74k/88z/44x/Dood aliases |
 | BLvietsub | Blogger `div.phimitem` and lazy posters | `[label\|embed]` episode tokens, all packed blocks, ssPlay source arrays, mislabeled HLS bodies |
 | KRX18 | archive cards | WordPress `doo_player_ajax` and returned embeds |
-| MenXtube, Videosxgays, Traingon, GVhot, Gaypornhot | exact BLx card/search constants | iframe, flashvar, data-link, packed/JSON player traversal |
+| MenXtube, Videosxgays, Traingon, GVhot, Gaypornhot | exact BLx card/search constants; MenXtube follows the current GayXFans redirect | iframe, flashvar, data-link, packed/JSON player traversal |
 | Xhamster, XvideosGay | exact mobile/mosaic cards and `srcset` posters | Xhamster initial JSON and Xvideos player state |
 | Jayboys | `div.list-item div.video.col-2` | player/video `data-src`, iframes, sources and downloads |
 | JavmovieChudai | `article.video-card`, CSS `div.art-poster` | direct `video.art-video source` and decoded `data-v` server JSON |
@@ -48,7 +51,7 @@ Catalog parsing now honors each provider's title, link, and poster selectors, in
 
 ## Live verification and network limits
 
-On 2026-07-16 the corrected BLvietsub chain returned a live stream from its current page through ssPlay. Pinoymoviepedia returned 57 valid catalog items with posters and resolved a current item to a live HLS URL.
+On 2026-07-16 the corrected BLvietsub chain returned a live stream from its current page through ssPlay. Pinoymoviepedia returned 57 valid catalog items with posters and resolved a current item to a live HLS URL. After correcting reader headers, 200-response fallback, redirect hosts, and detail URL recognition, live end-to-end samples also returned web-ready streams for Nurgay (7), GEPorner (12), GXtapes (2), XvideosGay (2), and MenXtube/GayXFans (4 non-preview source qualities, with duplicate download variants removed by URL deduplication where identical).
 
 The 29-origin probe from this workspace produced:
 
@@ -61,7 +64,7 @@ Those 195-byte responses contain no provider markup and cannot be repaired with 
 
 ## Failure logging
 
-Every request receives a request ID. Failures are emitted as structured JSON to Vercel Runtime Logs with `service=stremio-provider-diagnostics` and are also available in the bounded current-instance window at `/diagnostics.json`.
+Every request receives a request ID. Failures are emitted as structured JSON to the Vercel or Netlify runtime logs with `service=stremio-provider-diagnostics` and are also available in the bounded current-instance window at `/diagnostics.json`.
 
 Events include provider, stage, reason code, safe message, upstream hostname, HTTP status, duration, and request ID. Full paths, tokens, cookies, authorization values, and API keys are omitted or redacted. Use the request ID to correlate catalog, metadata, poster, extractor-fetch, and final stream events.
 

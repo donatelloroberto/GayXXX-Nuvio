@@ -294,7 +294,7 @@ function isProbablyVideoUrl(config, sourceUrl) {
     if (/[?&](?:s|search|filter|sort|page|paged)=/i.test(path)) return false;
     if (/\.(?:jpg|jpeg|png|gif|webp|svg|css|js|xml|pdf)(?:$|\?)/i.test(path)) return false;
     if (config.detailUrlPattern) return new RegExp(config.detailUrlPattern, "i").test(path);
-    return /\/videos?\/|\/watch\/|\/embed\/|\/movie\/|\/20\d{2}\/\d{1,2}\/|\/\d{5,}(?:\/|$)|\/[a-z0-9-]{10,}\/?$|\.html(?:$|\?)/i.test(path);
+    return /\/videos?\/|\/video\.|\/watch\/|\/embed\/|\/movie\/|\/20\d{2}\/\d{1,2}\/|\/\d{5,}(?:\/|$)|\/[a-z0-9-]{10,}\/?$|\.html(?:$|\?)/i.test(path);
   } catch (_) {
     return false;
   }
@@ -335,6 +335,41 @@ function parseCatalogPage(config, html, pageUrl) {
     });
   };
 
+  if (config.streamStrategy === "xhamster-initials") {
+    const raw = $("script#initials-script").html() || "";
+    const json = raw.replace(/^\s*window\.initials\s*=\s*/, "").replace(/;\s*$/, "");
+    try {
+      const initials = JSON.parse(json);
+      const queue = [initials];
+      while (queue.length) {
+        const value = queue.shift();
+        if (!value || typeof value !== "object") continue;
+        if (Array.isArray(value)) {
+          queue.push(...value);
+          continue;
+        }
+        if (value.pageURL && value.title && (value.thumbURL || value.imageURL)) {
+          const sourceUrl = normalizeUrl(value.pageURL, pageUrl);
+          if (sourceUrl && isAllowedSourceUrl(config, sourceUrl, pageUrl) && !seen.has(sourceUrl)) {
+            seen.add(sourceUrl);
+            const title = cleanText(value.title);
+            items.push({
+              id: createContentId(config.id, sourceUrl, title),
+              type: "movie",
+              name: title,
+              poster: normalizeUrl(value.thumbURL || value.imageURL, pageUrl) || config.logo || undefined,
+              posterShape: "poster",
+              description: config.name,
+              website: sourceUrl,
+              genres: ["Adult", config.name]
+            });
+          }
+        }
+        queue.push(...Object.values(value));
+      }
+    } catch (_) {}
+  }
+
   $(config.itemSelector || "article, .video-item, .item").each((_, element) => add(element));
   if (items.length < 8) {
     $("article, .video-item, .item, .thumb-block, .video, .post, .entry, [class*='video-card'], [class*='video-item']").each((_, element) => add(element));
@@ -358,9 +393,11 @@ async function fetchText(url, referer, options = {}) {
       redirect: "follow",
       signal: controller.signal,
       headers: {
-        "User-Agent": USER_AGENT,
-        "Accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.8",
+        ...(options.minimalHeaders ? {} : {
+          "User-Agent": USER_AGENT,
+          "Accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
+          "Accept-Language": "en-US,en;q=0.8"
+        }),
         ...(referer ? { Referer: referer } : {}),
         ...(options.headers || {})
       }
@@ -410,8 +447,9 @@ async function fetchProviderText(config, url, referer, requestId, stage) {
   if (!config.readerFallback && !config.readerCatalogFallback) throw directError;
   const started = Date.now();
   try {
-    const page = await fetchText(readerUrl(url), "https://r.jina.ai/", {
+    const page = await fetchText(readerUrl(url), "", {
       timeoutMs: READER_TIMEOUT_MS,
+      minimalHeaders: true,
       headers: { "X-Return-Format": "html", "X-No-Cache": "true" }
     });
     if (isChallengePage(page.html)) throw new Error("Reader returned an unavailable page");
@@ -429,6 +467,25 @@ async function fetchProviderText(config, url, referer, requestId, stage) {
     error.url = url;
     throw error;
   }
+}
+
+async function fetchCatalogReader(config, url, requestId, stage) {
+  const started = Date.now();
+  const page = await fetchText(readerUrl(url), "", {
+    timeoutMs: READER_TIMEOUT_MS,
+    minimalHeaders: true,
+    headers: { "X-Return-Format": "html", "X-No-Cache": "true" }
+  });
+  if (isChallengePage(page.html)) throw new Error("Reader returned an unavailable page");
+  const items = parseCatalogPage(config, page.html, url);
+  if (items.length) {
+    recordDiagnostic({
+      level: "info", provider: config.id, stage, code: "READER_CATALOG_FALLBACK_USED",
+      message: `Direct response had no usable cards; rendered fallback recovered ${items.length}`,
+      url, status: page.status, durationMs: Date.now() - started, requestId
+    });
+  }
+  return items;
 }
 
 function cacheGet(key) {
@@ -459,7 +516,18 @@ async function fetchProviderCatalog(config, query, requestId) {
     : (config.homeUrls || [config.baseUrl]).slice(0, 2).map((target) => normalizeUrl(target, config.baseUrl));
   const results = await Promise.allSettled(targets.map(async (target) => {
     const page = await fetchProviderText(config, target, config.baseUrl, requestId, query ? "search" : "catalog");
-    const items = parseCatalogPage(config, page.html, page.finalUrl);
+    let items = parseCatalogPage(config, page.html, page.finalUrl);
+    if (!items.length && config.readerCatalogFallback && !page.readerFallback) {
+      try {
+        items = await fetchCatalogReader(config, target, requestId, query ? "search" : "catalog");
+      } catch (error) {
+        recordDiagnostic({
+          level: "warn", provider: config.id, stage: query ? "search" : "catalog",
+          code: "READER_CATALOG_FALLBACK_FAILED", message: error.message,
+          url: target, status: error.status, durationMs: error.durationMs, requestId
+        });
+      }
+    }
     if (!items.length) {
       recordDiagnostic({ level: "warn", provider: config.id, stage: query ? "search" : "catalog", code: isChallengePage(page.html) ? "CHALLENGE_OR_UNAVAILABLE" : "NO_ITEMS_PARSED", message: `No video cards parsed from ${page.html.length} bytes`, url: page.finalUrl, status: page.status, durationMs: page.durationMs, requestId });
     }
@@ -709,7 +777,9 @@ async function getStreams(contentId, requestId) {
 
   const streams = [];
   const seen = new Set();
-  for (const item of Array.isArray(raw) ? raw : []) {
+  const candidates = (Array.isArray(raw) ? raw : []).filter((item) => item && /^https?:\/\//i.test(String(item.url || "")));
+  const nonPreviewCandidates = candidates.filter((item) => !/(?:preview|trailer|\/timelines?\/)/i.test(String(item.url || "")));
+  for (const item of nonPreviewCandidates.length ? nonPreviewCandidates : candidates) {
     if (!item || !/^https?:\/\//i.test(String(item.url || "")) || seen.has(item.url)) continue;
     seen.add(item.url);
     streams.push(mapProviderStream(decoded.config, decoded.sourceUrl, item));

@@ -61,8 +61,8 @@ function diagnosticsSnapshot(filters = {}) {
     filters: { provider: provider || null, stage: stage || null, level: level || null, limit },
     retention: {
       recentWindow: `Latest ${MAX_EVENTS} events in this running function instance`,
-      durableLog: "Vercel Runtime Logs (search service=stremio-provider-diagnostics)",
-      note: "The recent window resets on a serverless cold start; structured console events follow the Vercel project's log retention policy."
+      durableLog: "Hosting runtime logs (search service=stremio-provider-diagnostics)",
+      note: "The recent window resets on a serverless cold start; structured console events follow the hosting provider's log retention policy."
     },
     recordedCount: Array.from(counters.values()).reduce((total, count) => total + count, 0),
     matchingRecentCount: recent.length,

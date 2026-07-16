@@ -257,11 +257,11 @@
     "cloudStreamPackage": "MenXtube",
     "nuvioId": "menxtube",
     "nuvioFile": "providers/menxtube.js",
-    "baseUrl": "https://www.menxtube.com",
+    "baseUrl": "https://gayxfans.com",
     "searchTemplates": [
       "/search/?q=%q%"
     ],
-    "itemSelector": "div.list-videos div.item",
+    "itemSelector": "div.thumb-video.item",
     "specialMode": "generic",
     "supportedTypes": [
       "movie"
