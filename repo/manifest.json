@@ -1,0 +1,698 @@
+{
+  "id": "com.donatelloroberto.gayxxx",
+  "name": "GayXXX Nuvio",
+  "description": "Nuvio addon and native scraper repository for browsing, searching and resolving the converted GayXXX providers.",
+  "version": "2.1.0",
+  "logo": "https://gay-xxx-nuvio.vercel.app/logo.svg",
+  "resources": [
+    {
+      "name": "catalog",
+      "types": [
+        "movie"
+      ]
+    },
+    {
+      "name": "meta",
+      "types": [
+        "movie"
+      ],
+      "idPrefixes": [
+        "gayxxx:"
+      ]
+    },
+    {
+      "name": "stream",
+      "types": [
+        "movie"
+      ],
+      "idPrefixes": [
+        "gayxxx:"
+      ]
+    }
+  ],
+  "types": [
+    "movie"
+  ],
+  "idPrefixes": [
+    "gayxxx:"
+  ],
+  "catalogs": [
+    {
+      "type": "movie",
+      "id": "gayxxx",
+      "name": "GayXXX",
+      "extra": [
+        {
+          "name": "search",
+          "isRequired": false
+        },
+        {
+          "name": "genre",
+          "isRequired": false,
+          "options": [
+            "BLvietsub",
+            "BestHDgayporn",
+            "BoyfriendTV",
+            "Fullboys",
+            "Fxggxt",
+            "FxggxtOrg",
+            "Eporner Gay",
+            "PornOne Gay",
+            "GVhot",
+            "G_Xtapes",
+            "GayKinkyPorn",
+            "GayStream",
+            "Gaycock4U",
+            "Gaypornhot",
+            "Gaypornvidsxxx",
+            "Gayxx (AsianGay + Boyplus)",
+            "JustTheGays",
+            "KRX18",
+            "MenXtube",
+            "Nurgay",
+            "Traingon",
+            "Gayxnow",
+            "XHamster Gay",
+            "Xvideos Gay",
+            "iGay69",
+            "topHDgayporn"
+          ]
+        },
+        {
+          "name": "skip",
+          "isRequired": false
+        }
+      ]
+    }
+  ],
+  "behaviorHints": {
+    "adult": true,
+    "configurable": false,
+    "configurationRequired": false,
+    "p2p": false
+  },
+  "scrapers": [
+    {
+      "id": "blvietsub",
+      "name": "BLvietsub",
+      "description": "Trang tổng hợp phim BL vietsub hay nhất, cập nhật nhanh chóng và đầy đủ.",
+      "version": "1.0.3",
+      "author": "Gayvn",
+      "supportedTypes": [
+        "movie",
+        "tv"
+      ],
+      "filename": "providers/blvietsub.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://www.blvietsub.vip/favicon.ico",
+      "contentLanguage": [
+        "vi"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "besthdgayporn",
+      "name": "BestHDgayporn",
+      "description": "BestHDgayporn is Stream and download fan content as well as scenes from your favorite studios. This site is up updated daily and is always 100% free gay porn",
+      "version": "1.0.2",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/besthdgayporn.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://besthdgayporn.com/wp-content/uploads/2023/11/cropped-New-Logo-Site-110423-32x32.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "boyfriendtv",
+      "name": "BoyfriendTV",
+      "description": "BoyfriendTV is the best free full length porn video site. Choose from millions of hardcore videos that stream quickly and in high quality and only full length",
+      "version": "1.0.1",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/boyfriendtv.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://cdn77.boyfriendtv.com/bftv/www/img/bftv/logo-b.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "fullboys",
+      "name": "Fullboys",
+      "description": "Fullboys is the best free full length porn video site. Choose from millions of hardcore videos that stream quickly and in high quality and only full length",
+      "version": "1.0.4",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/fullboys.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://fullboys.com/Content/image/logo-144-v9.png",
+      "contentLanguage": [
+        "vi"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "fxggxt",
+      "name": "Fxggxt",
+      "description": "(VPN) Premium porn with 4K support",
+      "version": "1.0.3",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/fxggxt.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://fxggxt.org/wp-content/uploads/2024/08/logo.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "fxggxtorg",
+      "name": "FxggxtOrg",
+      "description": "(VPN) Premium porn with 4K support",
+      "version": "1.0.3",
+      "author": "Gayvn",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/fxggxtorg.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://fxggxt.org/wp-content/uploads/2024/08/logo.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "geporner",
+      "name": "Eporner Gay",
+      "description": "Eporner Gay is the best free full length porn video site. Choose from millions of hardcore videos that stream quickly and in high quality and only full length",
+      "version": "1.0.2",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/geporner.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://static-eu-cdn.eporner.com/favicon.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "gpornone",
+      "name": "PornOne Gay",
+      "description": "PornOne Gay is the best free full length porn video site. Choose from millions of hardcore videos that stream quickly and in high quality and only full length",
+      "version": "1.0.1",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/gpornone.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://pornone.com/favicon.ico",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "gvhot",
+      "name": "GVhot",
+      "description": "GVhot is the best free full length porn video site. Choose from millions of hardcore videos that stream quickly and in high quality and only full length",
+      "version": "1.0.1",
+      "author": "Gayvn",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/gvhot.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://gvhot.com/wp-content/uploads/2025/10/cropped-GV_HOT-removebg-preview-32x32.png",
+      "contentLanguage": [
+        "vi"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "gxtapes",
+      "name": "G_Xtapes",
+      "description": "Xtapes is the best free full length porn video site. Choose from millions of hardcore videos that stream quickly and in high quality and only full length",
+      "version": "1.0.3",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/gxtapes.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://gay.xtapes.in/wp-content/uploads/logo6.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "gaykinkyporn",
+      "name": "GayKinkyPorn",
+      "description": "GayKinkyPorn Where kinks and fetishes for gay men live.",
+      "version": "1.0.1",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/gaykinkyporn.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://gaystream.pw/wp-content/themes/gaystream2/img/logo.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "gaystream",
+      "name": "GayStream",
+      "description": "GayStream is the best video porn video site.",
+      "version": "1.0.2",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/gaystream.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://gaystream.pw/wp-content/themes/gaystream2/img/logo.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "gaycock4u",
+      "name": "Gaycock4U",
+      "description": "The very best of gay porn, just for you! We bring you free, high quality gay porn videos at GayCock4U.com - Updated Daily!",
+      "version": "1.0.2",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/gaycock4u.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://gaycock4u.com/wp-content/uploads/2024/12/logonew-fav.svg",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "gaypornhot",
+      "name": "Gaypornhot",
+      "description": "(VPN) Premium porn with 4K support",
+      "version": "1.0.4",
+      "author": "Gayvn",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/gaypornhot.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://gaypornhot.com/wp-content/themes/yolotube/images/logo.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "gaypornvidsxxx",
+      "name": "Gaypornvidsxxx",
+      "description": "The Best Free JAV Gay online, Free Download and Watching jav porn videos. Tons of hot jav censored,Japanese tube,Japanese sex online. Update everyday, javhd.today are waiting for you. Enjoy!",
+      "version": "1.0.3",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/gaypornvidsxxx.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://images.squarespace-cdn.com/content/v1/6624208c3da552548254a769/960085a5-68e0-4106-ba8b-b8b17d2ffbb6/Untitled1.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "gayxx",
+      "name": "Gayxx (AsianGay + Boyplus)",
+      "description": "Gayxx has the hottest gay porn. Free gay porn videos, huge collection of free gay porno movies. New gay men twink sex porn tube vids delivered to you everyday",
+      "version": "1.0.3",
+      "author": "Gayvn",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/gayxx.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://gayxx.net/wp-content/uploads/2026/03/cropped-watermark_video_2-Copy.png",
+      "contentLanguage": [
+        "vi",
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "justthegays",
+      "name": "JustTheGays",
+      "description": "Just The Gays | JustTheGays.com - Stream the newest and hottest gay videos for free from your favorite performers from OnlyFans, Just for Fans, and more",
+      "version": "1.0.2",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/justthegays.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://justthegays.com/wp-content/uploads/2026/01/JustTheGays.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "krx18",
+      "name": "KRX18",
+      "description": "18+ Asian",
+      "version": "1.0.2",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/krx18.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://krx18.com/wp-content/uploads/2022/10/krx18B.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "menxtube",
+      "name": "MenXtube",
+      "description": "MenXtube is the best free full length porn video site. Choose from millions of hardcore videos that stream quickly and in high quality and only full length",
+      "version": "1.0.3",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/menxtube.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://menxtube.com/contents/hutsedarcwon/theme/logo.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "nurgay",
+      "name": "Nurgay",
+      "description": "Nurgay is the best free full movies porn video site.",
+      "version": "1.0.2",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/nurgay.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://nurgay.to/wp-content/uploads/2023/10/logo.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "traingon",
+      "name": "Traingon",
+      "description": "Traingon.top is an adult-oriented platform",
+      "version": "1.0.3",
+      "author": "Gayvn",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/traingon.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://traingon.top/favicon.png",
+      "contentLanguage": [
+        "vi"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "videosxgays",
+      "name": "Gayxnow",
+      "description": "Videosxgays is the best free full length porn video site. Choose from millions of hardcore videos that stream quickly and in high quality and only full length",
+      "version": "1.0.3",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/videosxgays.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://www.videosxgays.com/contents/flqhqecpuowq/theme/logo.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "xhamster",
+      "name": "XHamster Gay",
+      "description": "Xhamster for Gay",
+      "version": "1.0.1",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/xhamster.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=https://vi.xhspot.com&sz=256",
+      "contentLanguage": [
+        "vi",
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "xvideosgay",
+      "name": "Xvideos Gay",
+      "description": "Converted Nuvio scraper for Xvideos Gay.",
+      "version": "1.0.1",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/xvideosgay.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://www.google.com/s2/favicons?domain=https://www.xvideos.com&sz=256",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "igay69",
+      "name": "iGay69",
+      "description": "iGay69 is the best free Asian porn video site.",
+      "version": "1.0.3",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/igay69.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://cdn.igay69.com/wp-content/uploads/2023/10/06172235/Logo-2.png",
+      "contentLanguage": [
+        "vi",
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    },
+    {
+      "id": "tophdgayporn",
+      "name": "topHDgayporn",
+      "description": "BestHDgayporn is Stream and download fan content as well as scenes from your favorite studios. This site is up updated daily and is always 100% free gay porn",
+      "version": "1.0.2",
+      "author": "GayXXX",
+      "supportedTypes": [
+        "movie"
+      ],
+      "filename": "providers/tophdgayporn.js",
+      "enabled": true,
+      "formats": [
+        "mp4",
+        "m3u8",
+        "mkv",
+        "webm"
+      ],
+      "logo": "https://besthdgayporn.com/wp-content/uploads/2023/11/cropped-New-Logo-Site-110423-32x32.png",
+      "contentLanguage": [
+        "en"
+      ],
+      "supportsExternalPlayer": true
+    }
+  ]
+}

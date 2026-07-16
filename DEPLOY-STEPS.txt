@@ -1,0 +1,10 @@
+1. Replace the GitHub repository contents with the files inside the repo folder.
+2. Confirm package-lock.json is deleted from GitHub.
+3. Confirm .npmrc exists at the repository root.
+4. In Vercel > Project > Settings > Build and Deployment, set Install Command to:
+   npm install --ignore-scripts --no-audit --no-fund --omit=optional --registry=https://registry.npmjs.org/
+5. Redeploy the latest commit and select Clear build cache.
+6. Verify:
+   https://gay-xxx-nuvio.vercel.app/health
+   https://gay-xxx-nuvio.vercel.app/manifest.json
+   https://gay-xxx-nuvio.vercel.app/catalog/movie/gayxxx.json
