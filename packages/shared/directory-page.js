@@ -199,7 +199,7 @@ function renderDirectoryPage(providerConfigs) {
     </div>
     <h1>GayXXX Stremio Addons</h1>
     <p>Choose a provider and install it directly in Stremio. Every provider has its own independent manifest, catalog, metadata, and stream endpoint.</p>
-    <div class="hero-tags"><span class="hero-tag">26 individual addons</span><span class="hero-tag">Catalog + Search</span><span class="hero-tag">Independent manifests</span></div>
+    <div class="hero-tags"><span class="hero-tag">${providers.length} individual addons</span><span class="hero-tag">Catalog + Search</span><span class="hero-tag">Independent manifests</span></div>
   </header>
   <main class="container">
     <div class="toolbar">

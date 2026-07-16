@@ -26,12 +26,34 @@ const epornerItems = epornerAddon.parseCatalogPage(eporner, `
 assert.equal(epornerItems.length, 1, "Eporner utility pages must be rejected");
 
 const besthd = configs.find((item) => item.id === "besthdgayporn");
+const blvietsub = configs.find((item) => item.id === "blvietsub");
+const javmoviechudai = configs.find((item) => item.id === "javmoviechudai");
+const jayboys = configs.find((item) => item.id === "jayboys");
+const pinoymoviepedia = configs.find((item) => item.id === "pinoymoviepedia");
+assert.deepEqual(besthd.searchTemplates, ["/?s=%q%"], "BestHD must use the CloudStream WordPress search route");
+assert.equal(besthd.card.title, ".aiovg-link-title");
 const besthdAddon = createProviderAddon(besthd.id);
 const besthdItems = besthdAddon.parseCatalogPage(besthd, `
   <div class="aiovg-item-video"><a href="/2026/07/daniel-justice-fucks-pheremosa-cockyboys/"><img data-src="/wp-content/uploads/2026/07/daniel-justice-pheremosa-cockyboys.png" alt="9” Daniel Justice Fucks Pheremosa - CockyBoys"></a></div>
 `, besthd.baseUrl);
 assert.equal(besthdItems.length, 1);
 assert.equal(besthdItems[0].poster, "https://besthdgayporn.com/wp-content/uploads/2026/07/daniel-justice-pheremosa-cockyboys.png");
+
+const javmovieAddon = createProviderAddon(javmoviechudai.id);
+const javmovieItems = javmovieAddon.parseCatalogPage(javmoviechudai, `
+  <article class="video-card"><a href="/fixture-javmovie/"><div class="art-poster" style="background-image:url('/posters/javmovie.jpg')"></div><h3 class="card-title">Javmovie Fixture</h3></a></article>
+`, javmoviechudai.baseUrl);
+assert.equal(javmovieItems[0].poster, "https://www.javmoviechudai.com/posters/javmovie.jpg", "CSS poster URLs must be preserved");
+
+const jayboysAddon = createProviderAddon(jayboys.id);
+assert.equal(jayboysAddon.parseCatalogPage(jayboys, `
+  <div class="list-item"><div class="video col-2"><a class="thumb-video" href="/fixture-jayboys/"><img src="/posters/jayboys.jpg"></a><a class="denomination"><span class="title">Jayboys Fixture</span></a></div></div>
+`, jayboys.baseUrl).length, 1);
+
+const pinoyAddon = createProviderAddon(pinoymoviepedia.id);
+assert.equal(pinoyAddon.parseCatalogPage(pinoymoviepedia, `
+  <div class="items normal"><article><div class="poster"><img data-wpfc-original-src="/posters/pinoy.jpg"><a href="/movies/pinoy-fixture/"></a></div><div class="data"><h3><a href="/movies/pinoy-fixture/">Pinoy Fixture</a></h3></div></article></div>
+`, pinoymoviepedia.baseUrl)[0].poster, "https://pinoymoviepedia.ru/posters/pinoy.jpg");
 
 const requestedId = gaycockAddon.createContentId(gaycock.id, "https://gaycock4u.com/this-is-a-real-video-title/", "Catalog title");
 const parsedMeta = gaycockAddon.parseMetaPage(gaycock, "https://gaycock4u.com/this-is-a-real-video-title/", `
@@ -47,6 +69,10 @@ assert.equal(parsedMeta.releaseInfo, "2025");
 assert.equal(parsedMeta.runtime, "62 min");
 
 const nurgay = configs.find((item) => item.id === "nurgay");
+assert.equal(nurgay.streamStrategy, "mirror-menu");
+const gaystream = configs.find((item) => item.id === "gaystream");
+assert.deepEqual(gaystream.searchTemplates, ["/?s=%q%&page=1", "/?s=%q%&page=2"]);
+assert.equal(gaystream.streamStrategy, "tabs-buttons");
 const nurgayAddon = createProviderAddon(nurgay.id);
 const nurgayMeta = nurgayAddon.parseMetaPage(nurgay, "https://nurgay.to/fixture-video/", `
   <meta property="og:title" content="Nurgay Fixture">
@@ -86,6 +112,17 @@ try {
   global.fetch = originalFetch;
 }
 
+global.fetch = async () => { throw new DOMException("fixture timeout", "TimeoutError"); };
+try {
+  const timedOut = await besthdAddon.getCatalog({}, "readonly-timeout-test");
+  assert.deepEqual(timedOut.metas, [], "a provider timeout must degrade to an empty catalog response");
+  const timeoutDiagnostics = diagnosticsSnapshot({ provider: "besthdgayporn", stage: "catalog", limit: 20 });
+  assert.ok(timeoutDiagnostics.recent.some((item) => item.code === "TIMEOUT"), "read-only DOMException codes must be normalized without masking the timeout");
+  assert.ok(!timeoutDiagnostics.recent.some((item) => /only a getter/i.test(item.message)), "timeout diagnostics must not contain the old read-only property error");
+} finally {
+  global.fetch = originalFetch;
+}
+
 const fetchedUrls = [];
 global.fetch = async (url) => {
   const target = String(url);
@@ -121,6 +158,111 @@ try {
     "https://media.example/mirror-360.mp4"
   ]));
   assert.ok(!fetchedUrls.some((url) => url.includes("bsky.app")), "social links must not be probed as video players");
+} finally {
+  global.fetch = originalFetch;
+}
+
+const sourceFaithfulFetches = [];
+global.fetch = async (url, options = {}) => {
+  const target = String(url);
+  sourceFaithfulFetches.push({ target, headers: new Headers(options.headers || {}) });
+  if (target === "https://gaystream.pw/video/source-faithful/") {
+    return new Response(`
+      <div class="tabs-wrap"><button onclick="document.getElementById('ifr').src='https://listmirror.com/embed/source-list'">Mirror</button></div>
+      <iframe id="ifr"></iframe>
+    `, { status: 200, headers: { "Content-Type": "text/html" } });
+  }
+  if (target === "https://listmirror.com/embed/source-list") {
+    return new Response(`<script>const sources = [
+      {"url":"https://jilliandescribecompany.com/e/voe-fixture"},
+      {"url":"https://vide0.net/e/dood-fixture"}
+    ];</script>`, { status: 200, headers: { "Content-Type": "text/html" } });
+  }
+  if (target === "https://jilliandescribecompany.com/e/voe-fixture") {
+    return new Response(`<script>const sources = {"hls":"https://cdn.example/voe-master.m3u8","video_height":720};</script>`, {
+      status: 200, headers: { "Content-Type": "text/html" }
+    });
+  }
+  if (target === "https://vide0.net/e/dood-fixture") {
+    return new Response(`<script>const pass='/pass_md5/fixture?token=dood-token';</script>`, {
+      status: 200, headers: { "Content-Type": "text/html" }
+    });
+  }
+  if (target === "https://vide0.net/pass_md5/fixture?token=dood-token") {
+    return new Response("https://cdn.example/dood-video-", { status: 200, headers: { "Content-Type": "text/plain" } });
+  }
+  if (target === "https://nurgay.to/source-faithful/") {
+    return new Response(`
+      <main><article itemprop="video"><div class="video-player"></div></article></main>
+      <ul id="mirrorMenu"><li><a class="mirror-opt" data-url="https://tapepops.com/e/tape-fixture">Tape</a></li></ul>
+    `, { status: 200, headers: { "Content-Type": "text/html" } });
+  }
+  if (target === "https://tapepops.com/e/tape-fixture") {
+    return new Response(`<script>document.getElementById('norobotlink').innerHTML = '//delivery.example/get_video?id=' + ('XYZ').substring(1);</script>`, {
+      status: 200, headers: { "Content-Type": "text/html" }
+    });
+  }
+  if (target === "https://besthdgayporn.com/source-faithful/") {
+    return new Response(`<video><source src="https://cdn.example/besthd-1080.mp4"></video>`, {
+      status: 200, headers: { "Content-Type": "text/html" }
+    });
+  }
+  if (target === "https://www.blvietsub.vip/source-faithful.html") {
+    return new Response(`<div name="main-movie-list">[FULL|https://ssplay.net/v/source-fixture.html]</div>`, {
+      status: 200, headers: { "Content-Type": "text/html" }
+    });
+  }
+  if (target === "https://ssplay.net/v/source-fixture.html") {
+    return new Response(`<script>eval(function(p,a,c,k,e,d){return p}('0({1:[{"2":"3","4":"5"}]});',62,6,'setup|sources|file|/SU/source-fixture.html|label|1080p'.split('|')))</script>`, {
+      status: 200, headers: { "Content-Type": "text/html" }
+    });
+  }
+  if (target === "https://ssplay.net/SU/source-fixture.html") {
+    return new Response("#EXTM3U\n#EXT-X-STREAM-INF:BANDWIDTH=4000000\nhttps://cdn.example/blvietsub-1080.m3u8", {
+      status: 200, headers: { "Content-Type": "text/html" }
+    });
+  }
+  if (target === "https://www.javmoviechudai.com/source-faithful/") {
+    const encoded = Buffer.from(JSON.stringify({ servers: [{ label: "Server 1", url: "https://player.example/embed/javmovie" }] })).toString("base64");
+    return new Response(`<video class="art-video" data-v="${encoded}"></video>`, { status: 200, headers: { "Content-Type": "text/html" } });
+  }
+  if (target === "https://player.example/embed/javmovie") {
+    return new Response(`<video src="https://cdn.example/javmovie-720.mp4"></video>`, { status: 200, headers: { "Content-Type": "text/html" } });
+  }
+  if (target === "https://javboys.tv/source-faithful/") {
+    return new Response(`<div id="player" data-src="https://player.example/embed/jayboys"></div>`, { status: 200, headers: { "Content-Type": "text/html" } });
+  }
+  if (target === "https://player.example/embed/jayboys") {
+    return new Response(`<source src="https://cdn.example/jayboys-1080.mp4">`, { status: 200, headers: { "Content-Type": "text/html" } });
+  }
+  if (target === "https://pinoymoviepedia.ru/movies/source-faithful/") {
+    return new Response(`<div class="pframe"><iframe src="https://streamhls.to/e/pinoy-fixture"></iframe></div>`, { status: 200, headers: { "Content-Type": "text/html" } });
+  }
+  if (target === "https://streamhls.to/e/pinoy-fixture") {
+    return new Response(`<script>const source={file:"https://cdn.example/pinoy-master.m3u8"};</script>`, { status: 200, headers: { "Content-Type": "text/html" } });
+  }
+  throw new Error("unexpected source-faithful fixture URL: " + target);
+};
+try {
+  const gaystreamStreams = await extractStreams(gaystream, "https://gaystream.pw/video/source-faithful/", "gaystream-source-test");
+  assert.ok(gaystreamStreams.some((item) => item.url === "https://cdn.example/voe-master.m3u8"), "GayStream must follow tab -> ListMirror -> Voe");
+  assert.ok(gaystreamStreams.some((item) => item.url.startsWith("https://cdn.example/dood-video-") && item.url.includes("token=dood-token")), "GayStream must resolve the vide0/Dood pass_md5 flow");
+
+  const nurgayStreams = await extractStreams(nurgay, "https://nurgay.to/source-faithful/", "nurgay-source-test");
+  assert.ok(nurgayStreams.some((item) => item.url === "https://delivery.example/get_video?id=YZ"), "Nurgay must follow mirror-menu StreamTape aliases");
+
+  const besthdStreams = await extractStreams(besthd, "https://besthdgayporn.com/source-faithful/", "besthd-source-test");
+  assert.deepEqual(besthdStreams.map((item) => item.url), ["https://cdn.example/besthd-1080.mp4"]);
+  const besthdRequest = sourceFaithfulFetches.find((item) => item.target === "https://besthdgayporn.com/source-faithful/");
+  assert.match(besthdRequest.headers.get("user-agent") || "", /Firefox\/139\.0/);
+  assert.equal(besthdRequest.headers.get("cookie"), "hasVisited=1; accessAgeDisclaimerPH=1");
+
+  const blvietsubStreams = await extractStreams(blvietsub, "https://www.blvietsub.vip/source-faithful.html", "blvietsub-source-test");
+  assert.deepEqual(blvietsubStreams.map((item) => item.url), ["https://ssplay.net/SU/source-fixture.html"], "BLvietsub must parse its literal episode token, unpack ssPlay, and recognize its mislabeled HLS response");
+
+  assert.deepEqual((await extractStreams(javmoviechudai, "https://www.javmoviechudai.com/source-faithful/", "javmovie-source-test")).map((item) => item.url), ["https://cdn.example/javmovie-720.mp4"]);
+  assert.deepEqual((await extractStreams(jayboys, "https://javboys.tv/source-faithful/", "jayboys-source-test")).map((item) => item.url), ["https://cdn.example/jayboys-1080.mp4"]);
+  assert.deepEqual((await extractStreams(pinoymoviepedia, "https://pinoymoviepedia.ru/movies/source-faithful/", "pinoy-source-test")).map((item) => item.url), ["https://cdn.example/pinoy-master.m3u8"]);
 } finally {
   global.fetch = originalFetch;
 }

@@ -1,0 +1,11 @@
+{
+  "name": "@gayxxx/javmoviechudai",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../packages/shared/server.js javmoviechudai",
+    "dev": "node ../../packages/shared/server.js javmoviechudai",
+    "build": "node ../../tools/build-addon.mjs",
+    "test": "node ../../tools/test-addon.mjs javmoviechudai"
+  }
+}

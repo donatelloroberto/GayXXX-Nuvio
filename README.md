@@ -1,12 +1,12 @@
 # GayXXX Individual Stremio Addons
 
-The former hybrid Nuvio repository has been replaced by 26 independently installable Stremio addons. Each provider has a unique manifest and catalog ID while sharing a defensive catalog/meta/stream runtime, a universal player extractor, its original provider-specific extractor, and structured failure diagnostics.
+The former hybrid Nuvio repository has been replaced by 29 independently installable Stremio addons. Each provider has a unique manifest and catalog ID while sharing a defensive catalog/meta/stream runtime, source-faithful provider mappings, a recursive player extractor, and structured failure diagnostics.
 
 The deployment root provides a searchable installation directory. Every provider card has its own **Install in Stremio** and **Copy Manifest** actions generated from the active deployment hostname.
 
 ## Addons
 
-`besthdgayporn`, `blvietsub`, `boyfriendtv`, `fullboys`, `fxggxt`, `fxggxtorg`, `gaycock4u`, `gaykinkyporn`, `gaypornhot`, `gaypornvidsxxx`, `gaystream`, `gayxx`, `geporner`, `gpornone`, `gvhot`, `gxtapes`, `igay69`, `justthegays`, `krx18`, `menxtube`, `nurgay`, `tophdgayporn`, `traingon`, `videosxgays`, `xhamster`, and `xvideosgay`.
+`besthdgayporn`, `blvietsub`, `boyfriendtv`, `fullboys`, `fxggxt`, `fxggxtorg`, `gaycock4u`, `gaykinkyporn`, `gaypornhot`, `gaypornvidsxxx`, `gaystream`, `gayxx`, `geporner`, `gpornone`, `gvhot`, `gxtapes`, `igay69`, `javmoviechudai`, `jayboys`, `justthegays`, `krx18`, `menxtube`, `nurgay`, `pinoymoviepedia`, `tophdgayporn`, `traingon`, `videosxgays`, `xhamster`, and `xvideosgay`.
 
 No provider represented by the former repository was omitted. The CloudStremio-Converter, gayxxx, and gayvn-cs repositories were consulted read-only for conversion and extractor behavior.
 
@@ -56,7 +56,7 @@ For example, the G_Xtapes template is `https://DEPLOYED-HOST/gxtapes/manifest.js
 - Catalog and metadata artwork is served through a provider-scoped poster proxy. It supplies the provider Referer, CORS/cache headers, and a local SVG fallback when the origin blocks image hotlinks.
 - Upstream, parser, and extractor failures are isolated.
 - Metadata keeps the exact catalog content ID so Stremio can always request the matching stream resource.
-- Player discovery covers direct media, JSON/JSON-LD state, packed scripts, nested iframes, DoodStream, StreamTape, Eporner XHR, and WordPress player AJAX.
+- Player discovery covers direct media, JSON/JSON-LD state, base64 player data, every Dean Edwards packed block, nested iframes, CloudStream-style episode tokens, DoodStream, StreamTape, ssPlay, Eporner XHR, and WordPress player AJAX.
 - Nurgay retries blocked catalog, metadata, and source-page requests through a rendered-reader fallback, then resolves its ListMirror player and nested mirrors. The fallback is not used by providers that do not need it.
 
 ## Provider diagnostics

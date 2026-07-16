@@ -232,8 +232,14 @@ function selectFirst($, selectors, attribute) {
   return "";
 }
 
-function extractCandidateTitle($, element) {
+function extractCandidateTitle($, element, config) {
   const node = $(element);
+  const card = config?.card || {};
+  if (card.title) {
+    const exact = node.is(card.title) ? node : node.find(card.title).first();
+    const value = card.titleAttribute ? exact.attr(card.titleAttribute) : exact.text();
+    if (cleanText(value)) return cleanText(value);
+  }
   const selectors = ["h1", "h2", "h3", "h4", ".title", ".name", ".entry-title", ".video-title", ".item-title", "a[title]", "img[alt]"];
   for (const selector of selectors) {
     const found = node.find(selector).first();
@@ -243,20 +249,31 @@ function extractCandidateTitle($, element) {
   return cleanText(node.attr("title") || node.attr("data-title") || node.text());
 }
 
-function extractCandidateUrl($, element, pageUrl) {
+function extractCandidateUrl($, element, pageUrl, config) {
   const node = $(element);
-  const href = node.attr("href") || node.find("a[href]").first().attr("href");
+  const card = config?.card || {};
+  let href = card.linkAttribute ? node.attr(card.linkAttribute) : "";
+  if (!href && card.link) {
+    const exact = node.is(card.link) ? node : node.find(card.link).first();
+    href = exact.attr("href") || exact.attr("data-url");
+  }
+  href = href || node.attr("href") || node.find("a[href]").first().attr("href");
   return normalizeUrl(href, pageUrl);
 }
 
-function extractCandidatePoster($, element, pageUrl) {
+function extractCandidatePoster($, element, pageUrl, config) {
   const node = $(element);
-  const image = node.is("img") ? node : node.find("img").first();
-  const attributes = ["data-src", "data-lazy-src", "data-original", "data-thumb", "data-poster", "src", "poster"];
+  const card = config?.card || {};
+  const image = card.poster
+    ? (node.is(card.poster) ? node : node.find(card.poster).first())
+    : (node.is("img") ? node : node.find("img").first());
+  const attributes = card.posterAttributes || ["data-src", "data-lazy-src", "data-original", "data-thumb", "data-poster", "src", "poster"];
   for (const attribute of attributes) {
     const value = image.attr(attribute);
     if (!value || String(value).startsWith("data:")) continue;
-    const resolved = normalizeUrl(value, pageUrl);
+    const cssUrl = /style$/i.test(attribute) ? String(value).match(/url\(\s*['"]?([^'"\)]+)['"]?\s*\)/i)?.[1] : "";
+    const candidate = cssUrl || (/srcset$/i.test(attribute) ? String(value).split(",").pop().trim().split(/\s+/)[0] : value);
+    const resolved = normalizeUrl(candidate, pageUrl);
     if (resolved) return resolved;
   }
   const srcset = image.attr("data-srcset") || image.attr("srcset");
@@ -300,12 +317,12 @@ function parseCatalogPage(config, html, pageUrl) {
   const items = [];
   const seen = new Set();
   const add = (element) => {
-    const sourceUrl = extractCandidateUrl($, element, pageUrl);
+    const sourceUrl = extractCandidateUrl($, element, pageUrl, config);
     if (!sourceUrl || !isAllowedSourceUrl(config, sourceUrl, pageUrl) || !isProbablyVideoUrl(config, sourceUrl) || seen.has(sourceUrl)) return;
-    const title = extractCandidateTitle($, element) || slugTitle(sourceUrl);
+    const title = extractCandidateTitle($, element, config) || slugTitle(sourceUrl);
     if (!title || title.length < 2) return;
     seen.add(sourceUrl);
-    const poster = extractCandidatePoster($, element, pageUrl);
+    const poster = extractCandidatePoster($, element, pageUrl, config);
     items.push({
       id: createContentId(config.id, sourceUrl, title),
       type: "movie",
@@ -355,10 +372,16 @@ async function fetchText(url, referer, options = {}) {
       throw error;
     }
     return { html: await response.text(), finalUrl: response.url || url, status: response.status, durationMs: Date.now() - started };
-  } catch (error) {
-    error.url = error.url || url;
+  } catch (cause) {
+    // AbortError/TimeoutError can be DOMException instances whose `code`
+    // property is read-only. Always rethrow a normal Error so diagnostics do
+    // not hide the real upstream failure behind a property-assignment error.
+    const error = new Error(cause?.message || String(cause));
+    error.name = cause?.name || "Error";
+    error.code = /^(?:AbortError|TimeoutError)$/.test(error.name) ? "TIMEOUT" : (cause?.code || "UPSTREAM_FETCH_FAILED");
+    error.status = cause?.status;
+    error.url = cause?.url || url;
     error.durationMs = Date.now() - started;
-    if (error.name === "AbortError") error.code = "TIMEOUT";
     throw error;
   } finally {
     clearTimeout(timer);
@@ -373,7 +396,7 @@ function readerUrl(url) {
 async function fetchProviderText(config, url, referer, requestId, stage) {
   let directError;
   try {
-    const page = await fetchText(url, referer);
+    const page = await fetchText(url, referer, { headers: config.requestHeaders || {} });
     if (!isChallengePage(page.html)) return page;
     directError = new Error("Challenge or unavailable page returned");
     directError.code = "CHALLENGE_OR_UNAVAILABLE";
@@ -384,7 +407,7 @@ async function fetchProviderText(config, url, referer, requestId, stage) {
     directError = error;
   }
 
-  if (!config.readerFallback) throw directError;
+  if (!config.readerFallback && !config.readerCatalogFallback) throw directError;
   const started = Date.now();
   try {
     const page = await fetchText(readerUrl(url), "https://r.jina.ai/", {
@@ -489,15 +512,35 @@ async function getCatalog(extra, requestId) {
 
 function parseMetaPage(config, sourceUrl, html, fallbackTitle, requestedId) {
   const $ = cheerio.load(html);
-  const title = selectFirst($, ["meta[property='og:title']"], "content") ||
+  let structured = {};
+  $("script[type='application/ld+json']").each((_, element) => {
+    if (structured.name || structured.thumbnailUrl) return;
+    try {
+      const root = JSON.parse($(element).html() || "null");
+      const queue = Array.isArray(root) ? root.slice() : [root];
+      while (queue.length) {
+        const item = queue.shift();
+        if (!item || typeof item !== "object") continue;
+        if (Array.isArray(item)) { queue.push(...item); continue; }
+        const type = String(item["@type"] || "");
+        if (/VideoObject|Movie|Episode/i.test(type) || item.contentUrl || item.thumbnailUrl) {
+          structured = item;
+          break;
+        }
+        if (item["@graph"]) queue.push(item["@graph"]);
+      }
+    } catch (_) {}
+  });
+  const structuredPoster = Array.isArray(structured.thumbnailUrl) ? structured.thumbnailUrl[0] : structured.thumbnailUrl;
+  const title = cleanText(structured.name) || selectFirst($, ["meta[property='og:title']"], "content") ||
     selectFirst($, ["h1", ".entry-title", ".video-title", "title"]) || fallbackTitle || slugTitle(sourceUrl);
-  const poster = selectFirst($, ["meta[property='og:image']", "meta[name='twitter:image']", "meta[itemprop='thumbnailUrl']"], "content") ||
+  const poster = cleanText(structuredPoster) || selectFirst($, ["meta[property='og:image']", "meta[name='twitter:image']", "meta[itemprop='thumbnailUrl']"], "content") ||
     selectFirst($, ["video[poster]"], "poster") ||
     selectFirst($, ["img[data-src]"], "data-src") ||
     selectFirst($, ["img[src]"], "src") || config.logo || "";
-  const description = selectFirst($, ["meta[property='og:description']", "meta[name='description']"], "content") || config.description || config.name;
-  const published = selectFirst($, ["meta[property='article:published_time']", "meta[itemprop='uploadDate']", "time[datetime]"], "content") || selectFirst($, ["time[datetime]"], "datetime");
-  const duration = selectFirst($, ["meta[property='video:duration']", "meta[itemprop='duration']"], "content");
+  const description = cleanText(structured.description) || selectFirst($, ["meta[property='og:description']", "meta[name='description']"], "content") || config.description || config.name;
+  const published = cleanText(structured.uploadDate || structured.datePublished) || selectFirst($, ["meta[property='article:published_time']", "meta[itemprop='uploadDate']", "time[datetime]"], "content") || selectFirst($, ["time[datetime]"], "datetime");
+  const duration = cleanText(structured.duration) || selectFirst($, ["meta[property='video:duration']", "meta[itemprop='duration']"], "content");
   const meta = {
     id: requestedId || createContentId(config.id, sourceUrl, title),
     type: "movie",
@@ -603,9 +646,10 @@ async function proxyPoster(token, req, res, requestId) {
         redirect: "follow",
         signal: controller.signal,
         headers: {
-          "User-Agent": USER_AGENT,
+          "User-Agent": selectedConfig.requestHeaders?.["User-Agent"] || USER_AGENT,
           Accept: "image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
-          Referer: payload.r || selectedConfig.baseUrl
+          Referer: payload.r || selectedConfig.baseUrl,
+          ...(selectedConfig.requestHeaders || {})
         }
       });
       const contentType = String(response.headers.get("content-type") || "").split(";")[0].trim().toLowerCase();

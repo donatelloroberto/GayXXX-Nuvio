@@ -9,22 +9,25 @@ const providerId = process.argv[2];
 assert.ok(providerId, "provider id is required");
 
 const originalFetch = global.fetch;
-const originalScrape = providers[providerId].scrape;
+const provider = providers[providerId];
+const originalScrape = provider?.scrape;
 const pageUrlByHost = new Map();
 const config = require("../packages/shared/provider-configs").find((item) => item.id === providerId);
 const detailUrl = new URL("/fixture-video", config.baseUrl).toString();
 const catalogHtml = `<article class="video-item item thumb-block aiovg-item-video"><a href="${detailUrl}" title="Fixture Video"><img src="https://img.example/poster.jpg" alt="Fixture Video"></a><h3>Fixture Video</h3></article>`;
-const metaHtml = `<meta property="og:title" content="Fixture Video"><meta property="og:image" content="https://img.example/poster.jpg"><meta property="og:description" content="Fixture description"><h1>Fixture Video</h1>`;
+const metaHtml = `<meta property="og:title" content="Fixture Video"><meta property="og:image" content="https://img.example/poster.jpg"><meta property="og:description" content="Fixture description"><h1>Fixture Video</h1><video><source src="https://media.example/video.mp4"></video>`;
 
 global.fetch = async (url) => ({
   ok: true, status: 200, url: String(url),
   text: async () => String(url).includes("fixture-video") ? metaHtml : catalogHtml,
   json: async () => ({})
 });
-providers[providerId].scrape = async () => [{
-  name: config.name, quality: "1080p", url: "https://media.example/video.mp4",
-  headers: { Referer: detailUrl, Origin: new URL(config.baseUrl).origin }
-}];
+if (provider) {
+  provider.scrape = async () => [{
+    name: config.name, quality: "1080p", url: "https://media.example/video.mp4",
+    headers: { Referer: detailUrl, Origin: new URL(config.baseUrl).origin }
+  }];
+}
 
 try {
   const addon = createProviderAddon(providerId);
@@ -46,5 +49,5 @@ try {
   console.log(`${providerId}: manifest/catalog/meta/stream/invalid-id fixtures passed`);
 } finally {
   global.fetch = originalFetch;
-  providers[providerId].scrape = originalScrape;
+  if (provider) provider.scrape = originalScrape;
 }

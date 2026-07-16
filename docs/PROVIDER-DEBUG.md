@@ -1,57 +1,74 @@
-# Provider debug and remediation map
+# Provider source audit and remediation
 
-The live baseline below was captured from `https://gay-xxx-nuvio.vercel.app` before this patch on 2026-07-16. Each row tested the manifest, home catalog, the first catalog item's metadata, and its stream resource. A zero in the baseline is evidence of the observed failure, not a permanent statement about the upstream site.
+## Repository provenance
 
-This patch cannot truthfully claim a live post-fix result until it is deployed. Run `npm run audit:live -- https://DEPLOYED-HOST` after deployment; the report tests up to three items per provider so one removed or protected video does not incorrectly condemn the entire provider.
+`Tuangayxx/GayXXX` is a distribution repository, not a hidden runtime dependency. Its `builds` branch contains compiled `.cs3` files plus two registries. Commit/workflow history identifies two independent build inputs:
 
-| Provider | Baseline catalog/meta/streams | Remediation in this patch |
-|---|---:|---|
-| besthdgayporn | 30 / yes / 1 | Removed the incorrect `notWebReady` flag that made header-bearing streams invisible in Stremio Web; added provider-hosted poster proxy/fallback and direct-media regression coverage. |
-| blvietsub | 25 / yes / 0 | Added recursive iframe, JSON/JSON-LD, script, and direct-media extraction. |
-| boyfriendtv | 0 / no / 0 | Added the current newest/HD listing fallback and image-card fallback parsing. |
-| fullboys | 30 / yes / 2 | Preserved the working direct-media path and metadata-ID contract. |
-| fxggxt | 30 / yes / 0 | Added packed-script decoding, recursive embeds, and longer fetch/provider timeouts. |
-| fxggxtorg | 20 / yes / 11 | Preserved provider extraction and merged/deduplicated it with the universal extractor. |
-| gaycock4u | 22 / yes / 0 | Rejects `/categories/` and other navigation pages before creating content IDs; adds player recursion. |
-| gaykinkyporn | 0 / no / 0 | Adds fallback card/image discovery and explicit challenge/markup diagnostics. |
-| gaypornhot | 0 / no / 0 | Adds fallback card/image discovery and explicit challenge/markup diagnostics. |
-| gaypornvidsxxx | 0 / no / 0 | Adds fallback card/image discovery and explicit challenge/markup diagnostics. |
-| gaystream | 26 / yes / 0 | Corrected search to `/search/<slug>/`; added recursive player/script extraction, filtered social/placeholder URLs from player probes, and routed posters through the shared image proxy. |
-| gayxx | 0 / no / 0 | Replaced retired `asiangaysex.net`/Boyplus targets with `gayxx.net` and date/root catalog fallbacks. |
-| geporner | 7 / yes / 0 | Rejects `/parentalcontrol/`; adds the Eporner video XHR flow and base-36 hash conversion. |
-| gpornone | 30 / yes / 14 | Preserved the working multi-source extraction path and proxy headers. |
-| gvhot | 0 / no / 0 | Increased short timeouts and added data-link/button/script discovery with failure timing. |
-| gxtapes | 0 / no / 0 | Replaced retired `gay.xtapes.tw` with `gay.xtapes.in`; added date-filter/root catalog fallbacks. |
-| igay69 | 20 / yes / 0 | Added packed-script, JSON state, and nested iframe extraction. |
-| justthegays | 30 / yes / 1 | Preserved working extraction and added fallback/diagnostic coverage. |
-| krx18 | 0 / no / 0 | Added WordPress `doo_player_ajax` resolution plus recursive resolution of returned embeds. |
-| menxtube | 0 / no / 0 | Increased short timeouts, added broad image-card parsing, and nested player extraction. |
-| nurgay | 0 / no / 0 | Added latest/most-viewed targets plus a rendered-reader fallback for the origin's 403 response; parses `thumbnailUrl`/ISO duration metadata and resolves ListMirror plus nested mirrors. |
-| tophdgayporn | 14 / yes / 1 | Preserved the working direct-media path and added metadata-ID coverage. |
-| traingon | 0 / no / 0 | Added image-anchor catalog fallback and challenge/markup diagnostics. |
-| videosxgays | 24 / yes / 0 | Replaced the old short provider budget with 35 seconds and added recursive player/script extraction. |
-| xhamster | 0 / no / 0 | Added image-card and embedded JSON/player discovery; challenge responses are now identified rather than silently swallowed. |
-| xvideosgay | 0 / no / 0 | Added image-card and script/player discovery; HTTP/challenge failures now include status and timing. |
+- `plugins.json`: the Gayvn-derived provider family.
+- `BLxplugins.json`: the BLx-derived provider family.
 
-## Failure flow
+BLx is not merely a hash-verified copy of the main list. It contains different providers and different implementations. The current registry union contains 29 distinct providers after deduplicating Gayxx. Three current entries—Jayboys, JavmovieChudai, and Pinoymoviepedia—were missing from the previous Stremio generator and are now included.
 
-Each Stremio request receives a request ID. Catalog targets report HTTP, timeout, challenge, or zero-card failures. Metadata reports fallback use while preserving the catalog ID. Stream resolution runs the universal and provider-specific extractors independently, merges successful URLs, and reports both extractor failure and the final empty result when neither path succeeds.
+The Gayvn Kotlin sources were used where available. For BLx-only providers, routes, selectors, player entry points, host aliases, and headers were recovered from the current compiled artifact constants. The compiled files are build inputs only; the deployed Stremio runtime does not download or execute them.
 
-The public diagnostic response deliberately omits complete upstream URLs and secrets. The event schema is:
+## Root causes found
 
-```json
-{
-  "service": "stremio-provider-diagnostics",
-  "timestamp": "2026-07-16T00:00:00.000Z",
-  "level": "warn",
-  "provider": "fxggxt",
-  "stage": "stream",
-  "code": "NO_PLAYABLE_URLS",
-  "message": "No direct media in page or 0 embeds",
-  "upstreamHost": "fxggxt.com",
-  "durationMs": 15321,
-  "requestId": "iad1::example"
-}
+1. The first conversion applied generic WordPress routes and card selectors to unrelated sites. Exact catalog/search behavior was lost.
+2. Dynamic player entry points were treated as direct media. Mirror menus, tab-button JavaScript, `data-v` base64 data, WordPress AJAX, packed scripts, and literal episode tokens therefore returned no streams.
+3. Only the first packed script was decoded. Players such as ssPlay place the useful configuration after unrelated packed anti-debug scripts.
+4. HLS endpoints sometimes use an `.html` path and an incorrect `text/html` content type. Extension/content-type-only detection rejected valid `#EXTM3U` responses.
+5. Poster URLs requiring a Referer were handed directly to Stremio, so hotlink protection produced blank artwork.
+6. Timeout handling attempted to assign to the read-only `code` property of a DOMException, masking the actual upstream timeout with `Cannot set property code ... which has only a getter`.
+7. The deployed server and CloudStream app do not have the same network identity. Many adult origins return an identical 195-byte `Site Unavailable` page to datacenter requests even when parsing is correct.
+
+## Source-faithful behavior now implemented
+
+| Providers | Catalog/poster mapping | Stream mapping |
+|---|---|---|
+| BestHDgayporn, topHDgayporn, Justthegays | AIOVG cards, Firefox/age cookies, lazy image attributes | JSON-LD, video/source, iframe media |
+| BoyfriendTV | media grid and `/search/?q=` | `var sources = [...]` with source labels and HLS flags |
+| Fxggxt, FxggxtOrg | `article.loop-video` and schema metadata | `div.responsive-player iframe` plus nested hosts |
+| GayStream | `div.grid-item`, `/?s=&page=` | tab-button `.src`, `iframe#ifr`, download link, ListMirror, Voe/Dood aliases |
+| Nurgay | `article.loop-video`, schema poster/duration | `#mirrorMenu`/dropdown mirrors, ListMirror, StreamTape/Dood/Filemoon/Bigwarp aliases |
+| Gayxx, Gaycock4U, GayKinkyPorn, Gaypornvidsxxx, iGay69 | provider-specific cards and lazy posters | source-specific iframe/data attributes plus recursive player state |
+| GEPorner | exact Eporner result cards | `EP.video.player.vid/hash` XHR with base-36 hash conversion |
+| GPornOne | `.popbop.vidLinkFX` | `#pornone-video-player source` |
+| GXtapes | `ul.listing-tube li` | `#video-code iframe` plus 74k/88z/44x/Dood aliases |
+| BLvietsub | Blogger `div.phimitem` and lazy posters | `[label\|embed]` episode tokens, all packed blocks, ssPlay source arrays, mislabeled HLS bodies |
+| KRX18 | archive cards | WordPress `doo_player_ajax` and returned embeds |
+| MenXtube, Videosxgays, Traingon, GVhot, Gaypornhot | exact BLx card/search constants | iframe, flashvar, data-link, packed/JSON player traversal |
+| Xhamster, XvideosGay | exact mobile/mosaic cards and `srcset` posters | Xhamster initial JSON and Xvideos player state |
+| Jayboys | `div.list-item div.video.col-2` | player/video `data-src`, iframes, sources and downloads |
+| JavmovieChudai | `article.video-card`, CSS `div.art-poster` | direct `video.art-video source` and decoded `data-v` server JSON |
+| Pinoymoviepedia | Doothemes archive cards and multi-attribute posters | `div.pframe iframe` plus Dood/Mixdrop/Voe/VidHide/StreamWish-compatible recursion |
+
+## Posters and metadata
+
+Catalog parsing now honors each provider's title, link, and poster selectors, including `srcset`, lazy-image attributes, CSS `url(...)`, schema.org metadata, and JSON-LD `VideoObject` data. Metadata preserves the exact catalog ID used by Stremio. Artwork is returned through a signed provider-scoped proxy that supplies the original Referer and provider headers. If an origin still rejects the image, the proxy returns a valid SVG poster instead of an empty field.
+
+## Live verification and network limits
+
+On 2026-07-16 the corrected BLvietsub chain returned a live stream from its current page through ssPlay. Pinoymoviepedia returned 57 valid catalog items with posters and resolved a current item to a live HLS URL.
+
+The 29-origin probe from this workspace produced:
+
+- 1 fully parsed origin (Pinoymoviepedia).
+- 18 origins returning the same 195-byte `Site Unavailable` response with HTTP 200.
+- 9 origins exceeding the intentionally short 12-second concurrent probe budget.
+- 1 origin returning HTTP 502 (GXtapes).
+
+Those 195-byte responses contain no provider markup and cannot be repaired with another CSS selector. They are recorded as `CHALLENGE_OR_UNAVAILABLE`, distinct from `NO_ITEMS_PARSED`. A different deployment region or an authorized browser/proxy service may be required for origins that block Vercel/datacenter traffic. The deterministic suite verifies the recovered routes and player flows without pretending a blocked origin passed a live test.
+
+## Failure logging
+
+Every request receives a request ID. Failures are emitted as structured JSON to Vercel Runtime Logs with `service=stremio-provider-diagnostics` and are also available in the bounded current-instance window at `/diagnostics.json`.
+
+Events include provider, stage, reason code, safe message, upstream hostname, HTTP status, duration, and request ID. Full paths, tokens, cookies, authorization values, and API keys are omitted or redacted. Use the request ID to correlate catalog, metadata, poster, extractor-fetch, and final stream events.
+
+Run after deployment:
+
+```bash
+npm run audit:live -- https://DEPLOYED-HOST
 ```
 
-Use the request ID to correlate catalog, metadata, extractor-fetch, and stream events for a single Stremio call. Use the counters in `/diagnostics.json` to see repeated failure signatures instead of treating a one-off removed video as a provider-wide outage.
+The audit checks every manifest and catalog, then samples metadata, posters, total streams, and Stremio-Web-ready streams. It also stores the current diagnostic snapshot in the report.

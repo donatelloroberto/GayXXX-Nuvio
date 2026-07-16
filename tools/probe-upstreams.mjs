@@ -11,14 +11,16 @@ let cursor = 0;
 
 async function probe(config) {
   const started = Date.now();
+  const target = config.homeUrls?.[0] || config.baseUrl;
   try {
-    const response = await fetch(config.baseUrl, {
+    const response = await fetch(target, {
       redirect: "follow",
       signal: AbortSignal.timeout(timeoutMs),
       headers: {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
         Accept: "text/html,application/xhtml+xml,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.8"
+        "Accept-Language": "en-US,en;q=0.8",
+        ...(config.requestHeaders || {})
       }
     });
     const html = await response.text();
@@ -28,6 +30,7 @@ async function probe(config) {
     const generic = $("article, .video-item, .item, .thumb-block, li").length;
     const row = {
       id: config.id,
+      target,
       status: response.status,
       finalUrl: response.url,
       bytes: Buffer.byteLength(html),
@@ -55,4 +58,3 @@ await Promise.all(Array.from({ length: concurrency }, () => worker()));
 rows.sort((a, b) => a.id.localeCompare(b.id));
 fs.writeFileSync(output, JSON.stringify({ generatedAt: new Date().toISOString(), rows }, null, 2) + "\n");
 console.log(`Report: ${output}`);
-

@@ -1,13 +1,13 @@
-# Gayxx
+# JavmovieChudai
 
-Independent Stremio addon for Gayxx.
+Independent Stremio addon for JavmovieChudai.
 
-- Manifest ID: `community.gayxx`
+- Manifest ID: `community.javmoviechudai`
 - Resources: catalog, meta, stream
 - Content type: movie
-- Local run: `npm run dev --workspace addons/gayxx`
+- Local run: `npm run dev --workspace addons/javmoviechudai`
 - Local manifest: `http://localhost:7000/manifest.json`
-- Shared deployment manifest: `https://DEPLOYED-HOST/gayxx/manifest.json`
+- Shared deployment manifest: `https://DEPLOYED-HOST/javmoviechudai/manifest.json`
 - Environment: `PORT`, `FETCH_TIMEOUT_MS`, `PROVIDER_TIMEOUT_MS`, `CACHE_TTL_MS`, optional `TMDB_API_KEY`
 
 Deploy the repository to Vercel with the root configuration. Upstream markup or host protection can require extractor maintenance.

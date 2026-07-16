@@ -1,5 +1,6 @@
-/* Generated from the converted provider CONFIG blocks. */
-module.exports = [
+/* Generated base metadata, enriched with recovered CloudStream source specs. */
+const sourceSpecs = require("./cloudstream-specs");
+const providers = [
   {
     "id": "besthdgayporn",
     "name": "BestHDgayporn",
@@ -487,5 +488,66 @@ module.exports = [
     "description": "Converted Nuvio scraper for Xvideos Gay.",
     "logo": "https://www.google.com/s2/favicons?domain=https://www.xvideos.com&sz=256",
     "language": "en"
+  },
+  {
+    "id": "javmoviechudai",
+    "name": "JavmovieChudai",
+    "baseUrl": "https://www.javmoviechudai.com",
+    "origin": "https://www.javmoviechudai.com",
+    "searchTemplates": [
+      "/?s=%q%&page=1",
+      "/?s=%q%&page=2"
+    ],
+    "itemSelector": "article.video-card",
+    "mode": "generic",
+    "supportedTypes": [
+      "movie"
+    ],
+    "filename": "providers/javmoviechudai.js",
+    "description": "JavmovieChudai full-length video provider.",
+    "logo": "https://javmoviechudai.com/wp-content/themes/javmoviechudai/javmovie-watermark.png",
+    "language": "en"
+  },
+  {
+    "id": "jayboys",
+    "name": "Jayboys",
+    "baseUrl": "https://javboys.tv",
+    "origin": "https://javboys.tv",
+    "searchTemplates": [
+      "/page/1/?s=%q%",
+      "/page/2/?s=%q%"
+    ],
+    "itemSelector": "div.list-item div.video.col-2",
+    "mode": "generic",
+    "supportedTypes": [
+      "movie"
+    ],
+    "filename": "providers/jayboys.js",
+    "description": "Jayboys Japanese gay video provider.",
+    "logo": "https://www.javboys.tv/wp-content/uploads/2025/04/177d33e6.webp",
+    "language": "en"
+  },
+  {
+    "id": "pinoymoviepedia",
+    "name": "Pinoymoviepedia",
+    "baseUrl": "https://pinoymoviepedia.ru",
+    "origin": "https://pinoymoviepedia.ru",
+    "searchTemplates": [
+      "/search/%slug%"
+    ],
+    "itemSelector": "div.items.normal article, div#archive-content article, div.items.full article",
+    "mode": "generic",
+    "supportedTypes": [
+      "movie"
+    ],
+    "filename": "providers/pinoymoviepedia.js",
+    "description": "Pinoymoviepedia Filipino movie and series provider.",
+    "logo": "https://t3.gstatic.com/faviconV2?client=SOCIAL&type=FAVICON&fallback_opts=TYPE,SIZE,URL&url=https://pinoymoviepedia.ru&size=64",
+    "language": "fil"
   }
 ];
+
+module.exports = providers.map((provider) => ({
+  ...provider,
+  ...(sourceSpecs[provider.id] || {})
+}));
