@@ -1,0 +1,11 @@
+{
+  "name": "@gayxxx/fullboys",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../packages/shared/server.js fullboys",
+    "dev": "node ../../packages/shared/server.js fullboys",
+    "build": "node ../../tools/build-addon.mjs",
+    "test": "node ../../tools/test-addon.mjs fullboys"
+  }
+}

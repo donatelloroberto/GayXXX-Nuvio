@@ -1,0 +1,11 @@
+{
+  "name": "@gayxxx/gaykinkyporn",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../packages/shared/server.js gaykinkyporn",
+    "dev": "node ../../packages/shared/server.js gaykinkyporn",
+    "build": "node ../../tools/build-addon.mjs",
+    "test": "node ../../tools/test-addon.mjs gaykinkyporn"
+  }
+}

@@ -1,23 +1,18 @@
 {
-  "name": "gayxxx-nuvio-addon",
-  "version": "2.1.1",
+  "name": "gayxxx-individual-stremio-addons",
+  "version": "3.0.0",
   "private": true,
-  "description": "Nuvio plugin repository and hosted catalog/meta/stream addon.",
-  "main": "server/index.js",
+  "description": "Independent Stremio addons derived from the GayXXX provider implementations.",
   "type": "commonjs",
-  "engines": {
-    "node": "22.x"
-  },
+  "workspaces": ["addons/*"],
+  "engines": { "node": ">=20" },
   "scripts": {
-    "start": "node server/index.js",
-    "validate": "node tools/validate.mjs",
-    "test:plugins": "node tools/smoke-test.mjs",
-    "test:addon": "node tools/addon-test.mjs",
-    "test": "npm run validate && npm run test:plugins && npm run test:addon",
-    "verify:live": "node tools/verify-live.mjs"
+    "generate": "node tools/generate-workspaces.mjs",
+    "build": "node tools/build-addon.mjs",
+    "test": "node tools/test-all.mjs",
+    "start": "node packages/shared/directory-server.js",
+    "dev": "node packages/shared/directory-server.js"
   },
-  "dependencies": {
-    "cheerio-without-node-native": "0.20.2"
-  },
+  "dependencies": { "cheerio-without-node-native": "0.20.2" },
   "packageManager": "npm@10.9.4"
 }

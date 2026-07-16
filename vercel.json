@@ -1,35 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "installCommand": "npm install --ignore-scripts --no-audit --no-fund --omit=optional --registry=https://registry.npmjs.org/",
-  "functions": {
-    "api/index.js": {
-      "maxDuration": 60
-    }
-  },
+  "functions": { "api/index.js": { "maxDuration": 60 } },
   "rewrites": [
-    {
-      "source": "/catalog/:route*",
-      "destination": "/api/index?route=catalog/:route*"
-    },
-    {
-      "source": "/meta/:route*",
-      "destination": "/api/index?route=meta/:route*"
-    },
-    {
-      "source": "/stream/:route*",
-      "destination": "/api/index?route=stream/:route*"
-    },
-    {
-      "source": "/logo.svg",
-      "destination": "/api/index?route=logo.svg"
-    },
-    {
-      "source": "/health",
-      "destination": "/api/index?route=health"
-    },
-    {
-      "source": "/",
-      "destination": "/api/index"
-    }
+    { "source": "/:path*", "destination": "/api/index" }
   ]
 }
+

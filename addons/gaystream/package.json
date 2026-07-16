@@ -1,0 +1,11 @@
+{
+  "name": "@gayxxx/gaystream",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../packages/shared/server.js gaystream",
+    "dev": "node ../../packages/shared/server.js gaystream",
+    "build": "node ../../tools/build-addon.mjs",
+    "test": "node ../../tools/test-addon.mjs gaystream"
+  }
+}

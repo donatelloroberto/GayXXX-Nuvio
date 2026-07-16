@@ -1,0 +1,11 @@
+{
+  "name": "@gayxxx/blvietsub",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../packages/shared/server.js blvietsub",
+    "dev": "node ../../packages/shared/server.js blvietsub",
+    "build": "node ../../tools/build-addon.mjs",
+    "test": "node ../../tools/test-addon.mjs blvietsub"
+  }
+}

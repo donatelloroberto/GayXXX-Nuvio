@@ -1,0 +1,11 @@
+{
+  "name": "@gayxxx/xhamster",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../packages/shared/server.js xhamster",
+    "dev": "node ../../packages/shared/server.js xhamster",
+    "build": "node ../../tools/build-addon.mjs",
+    "test": "node ../../tools/test-addon.mjs xhamster"
+  }
+}

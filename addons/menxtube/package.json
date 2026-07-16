@@ -1,0 +1,11 @@
+{
+  "name": "@gayxxx/menxtube",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../packages/shared/server.js menxtube",
+    "dev": "node ../../packages/shared/server.js menxtube",
+    "build": "node ../../tools/build-addon.mjs",
+    "test": "node ../../tools/test-addon.mjs menxtube"
+  }
+}

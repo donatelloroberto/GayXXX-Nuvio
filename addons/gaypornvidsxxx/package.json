@@ -1,0 +1,11 @@
+{
+  "name": "@gayxxx/gaypornvidsxxx",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../packages/shared/server.js gaypornvidsxxx",
+    "dev": "node ../../packages/shared/server.js gaypornvidsxxx",
+    "build": "node ../../tools/build-addon.mjs",
+    "test": "node ../../tools/test-addon.mjs gaypornvidsxxx"
+  }
+}

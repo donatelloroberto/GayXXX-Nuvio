@@ -1,67 +1,65 @@
-# GayXXX Nuvio
+# GayXXX Individual Stremio Addons
 
-This repository is both:
+The former hybrid Nuvio repository has been replaced by 26 independently installable Stremio addons. Each provider has a unique manifest and catalog ID while sharing a defensive catalog/meta/stream runtime and its original provider-specific extractor.
 
-1. a Nuvio addon providing catalog, search, metadata and stream endpoints; and
-2. a Nuvio native plugin repository containing 26 JavaScript scrapers.
+The deployment root provides a searchable installation directory. Every provider card has its own **Install in Stremio** and **Copy Manifest** actions generated from the active deployment hostname.
 
-## Install as an addon
+## Addons
 
-Add this URL in **Nuvio → Addons**:
+`besthdgayporn`, `blvietsub`, `boyfriendtv`, `fullboys`, `fxggxt`, `fxggxtorg`, `gaycock4u`, `gaykinkyporn`, `gaypornhot`, `gaypornvidsxxx`, `gaystream`, `gayxx`, `geporner`, `gpornone`, `gvhot`, `gxtapes`, `igay69`, `justthegays`, `krx18`, `menxtube`, `nurgay`, `tophdgayporn`, `traingon`, `videosxgays`, `xhamster`, and `xvideosgay`.
+
+No provider represented by the former repository was omitted. The CloudStremio-Converter, gayxxx, and gayvn-cs repositories were consulted read-only for conversion and extractor behavior.
+
+## Structure
+
+- `addons/<provider>/`: independent npm workspace and provider documentation
+- `packages/shared/`: Stremio runtime, provider registry, configurations, and extractors
+- `api/`: shared Vercel entry point
+- `tools/`: deterministic fixture tests, workspace generation, and build validation
+
+## Development
+
+```bash
+npm install
+npm test
+npm run build
+npm run dev
+npm run dev --workspace addons/gxtapes
+```
+
+The directory is served at `http://localhost:7000`. A selected standalone workspace addon is served at `http://localhost:7000/manifest.json`. Change `PORT`, `FETCH_TIMEOUT_MS`, `PROVIDER_TIMEOUT_MS`, `CACHE_TTL_MS`, or `MAX_CATALOG_ITEMS` as needed.
+
+## Deployment and installation
+
+Deploy the repository as one Vercel project:
+
+```bash
+vercel deploy
+```
+
+Every manifest is then available at:
 
 ```text
-https://gay-xxx-nuvio.vercel.app/manifest.json
+https://DEPLOYED-HOST/<provider>/manifest.json
 ```
 
-## Install as a plugin repository
+For example, the G_Xtapes template is `https://DEPLOYED-HOST/gxtapes/manifest.json`. Replace `DEPLOYED-HOST` only after deployment, then paste the resulting HTTPS manifest URL into Stremio.
 
-Add the same URL in **Settings → General → Plugin manifest URL**:
+## Contract behavior
 
-```text
-https://gay-xxx-nuvio.vercel.app/manifest.json
-```
-
-The manifest intentionally contains both the addon contract and the `scrapers` registry. Each Nuvio parser ignores fields that do not belong to its subsystem.
-
-## Required live checks
-
-After every Vercel deployment, these URLs must return HTTP 200:
-
-```text
-https://gay-xxx-nuvio.vercel.app/health
-https://gay-xxx-nuvio.vercel.app/manifest.json
-https://gay-xxx-nuvio.vercel.app/catalog/movie/gayxxx.json
-```
-
-Expected health response:
-
-```json
-{"ok":true,"version":"2.1.0","service":"com.donatelloroberto.gayxxx"}
-```
-
-## Runtime
-
-- Node.js is pinned to `22.x` for stable Vercel dependency installation.
-- `manifest.json` is a static hybrid manifest.
-- `/catalog`, `/meta`, `/stream`, `/health`, `/logo.svg`, and `/` are routed to `api/index.js`.
-- Provider scripts remain available under `/providers/*.js`.
+- Home/search pages map to searchable catalogs.
+- Reversible provider-scoped IDs map catalog entries to metadata and streams.
+- Invalid IDs return empty Stremio results rather than server errors.
+- Stream URLs are deduplicated and required Referer/Origin headers are carried in `behaviorHints.proxyHeaders`.
+- Upstream, parser, and extractor failures are isolated.
 
 ## Validation
 
-```bash
-npm ci
-npm test
-```
+`npm test` runs deterministic mocked catalog, metadata, stream, header, manifest-ID, catalog-ID, and invalid-ID tests for every addon. Live upstream smoke checks are separate because provider availability and anti-bot behavior can change.
 
-The tests validate all 26 plugin entries, execute every provider with fixture HTTP responses, and verify addon catalog/meta/stream behavior.
+## Troubleshooting
 
-
-## Vercel npm installation fix
-
-This repository intentionally does not commit `package-lock.json`. The earlier generated lockfile contained environment-specific internal registry URLs. Vercel installs the single runtime dependency from the public npm registry and omits the unused optional jsdom tree.
-
-If Vercel has an Install Command override in Project Settings, use:
-
-```text
-npm install --ignore-scripts --no-audit --no-fund --omit=optional --registry=https://registry.npmjs.org/
-```
+- An empty catalog usually means the upstream site changed its markup or blocked the server region.
+- An empty stream list means the provider extractor found no supported playable URL.
+- Increase timeout environment variables only when the upstream source is consistently slow.
+- Provider site or host changes may require selector or extractor maintenance.

@@ -1,0 +1,11 @@
+{
+  "name": "@gayxxx/boyfriendtv",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../packages/shared/server.js boyfriendtv",
+    "dev": "node ../../packages/shared/server.js boyfriendtv",
+    "build": "node ../../tools/build-addon.mjs",
+    "test": "node ../../tools/test-addon.mjs boyfriendtv"
+  }
+}

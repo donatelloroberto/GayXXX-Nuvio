@@ -1,0 +1,11 @@
+{
+  "name": "@gayxxx/gxtapes",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../packages/shared/server.js gxtapes",
+    "dev": "node ../../packages/shared/server.js gxtapes",
+    "build": "node ../../tools/build-addon.mjs",
+    "test": "node ../../tools/test-addon.mjs gxtapes"
+  }
+}

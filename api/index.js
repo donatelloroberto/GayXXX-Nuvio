@@ -1,12 +1,5 @@
 "use strict";
 
-const { handleRequest } = require("../server/addon");
+const { handleSharedRequest } = require("../packages/shared/router");
+module.exports = (req, res) => Promise.resolve(handleSharedRequest(req, res));
 
-module.exports = async function handler(req, res) {
-  const route = req.query && req.query.route;
-  if (route !== undefined) {
-    const path = Array.isArray(route) ? route.join("/") : String(route || "");
-    req.url = "/" + path.replace(/^\/+/, "");
-  }
-  return handleRequest(req, res);
-};

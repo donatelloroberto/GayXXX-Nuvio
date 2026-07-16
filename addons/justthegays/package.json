@@ -1,0 +1,11 @@
+{
+  "name": "@gayxxx/justthegays",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ../../packages/shared/server.js justthegays",
+    "dev": "node ../../packages/shared/server.js justthegays",
+    "build": "node ../../tools/build-addon.mjs",
+    "test": "node ../../tools/test-addon.mjs justthegays"
+  }
+}
