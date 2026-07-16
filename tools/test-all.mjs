@@ -20,6 +20,10 @@ if (rewrittenManifest.url !== "/gxtapes/manifest.json") throw new Error("Vercel 
 const rewrittenCatalog = { url: "/api/index?route=gxtapes/catalog/movie/community.gxtapes.catalog/search=demo.json&skip=0" };
 restoreRewrittenPath(rewrittenCatalog);
 if (!rewrittenCatalog.url.startsWith("/gxtapes/catalog/")) throw new Error("Vercel catalog rewrite was not restored");
+const vercelConfig = require("../vercel.json");
+if (vercelConfig.rewrites[0].source !== "/" || vercelConfig.rewrites[0].destination !== "/api/index?route=") {
+  throw new Error("Vercel root GUI rewrite is missing");
+}
 for (const config of configs) {
   const run = spawnSync(process.execPath, [addonTestPath, config.id], { stdio: "inherit" });
   if (run.status !== 0) process.exit(run.status || 1);
