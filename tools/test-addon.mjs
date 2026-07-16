@@ -38,6 +38,7 @@ try {
   const streams = await addon.getStreams(catalog.metas[0].id);
   assert.equal(streams.streams[0].url, "https://media.example/video.mp4");
   assert.equal(streams.streams[0].behaviorHints.proxyHeaders.request.Referer, detailUrl);
+  assert.notEqual(streams.streams[0].behaviorHints.notWebReady, true, "request headers must not hide playable streams from Stremio Web");
   assert.throws(() => addon.decodeContentId("invalid:id"));
   global.fetch = async () => { throw new Error("fixture network failure"); };
   const failedCatalog = await createProviderAddon(providerId).getCatalog({});

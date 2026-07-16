@@ -6,7 +6,7 @@ This patch cannot truthfully claim a live post-fix result until it is deployed. 
 
 | Provider | Baseline catalog/meta/streams | Remediation in this patch |
 |---|---:|---|
-| besthdgayporn | 30 / yes / 1 | Preserved working direct-media path; added JSON, iframe, header, and diagnostics regression coverage. |
+| besthdgayporn | 30 / yes / 1 | Removed the incorrect `notWebReady` flag that made header-bearing streams invisible in Stremio Web; added provider-hosted poster proxy/fallback and direct-media regression coverage. |
 | blvietsub | 25 / yes / 0 | Added recursive iframe, JSON/JSON-LD, script, and direct-media extraction. |
 | boyfriendtv | 0 / no / 0 | Added the current newest/HD listing fallback and image-card fallback parsing. |
 | fullboys | 30 / yes / 2 | Preserved the working direct-media path and metadata-ID contract. |
@@ -16,7 +16,7 @@ This patch cannot truthfully claim a live post-fix result until it is deployed. 
 | gaykinkyporn | 0 / no / 0 | Adds fallback card/image discovery and explicit challenge/markup diagnostics. |
 | gaypornhot | 0 / no / 0 | Adds fallback card/image discovery and explicit challenge/markup diagnostics. |
 | gaypornvidsxxx | 0 / no / 0 | Adds fallback card/image discovery and explicit challenge/markup diagnostics. |
-| gaystream | 26 / yes / 0 | Corrected search to `/search/<slug>/`; added recursive player and script extraction. |
+| gaystream | 26 / yes / 0 | Corrected search to `/search/<slug>/`; added recursive player/script extraction, filtered social/placeholder URLs from player probes, and routed posters through the shared image proxy. |
 | gayxx | 0 / no / 0 | Replaced retired `asiangaysex.net`/Boyplus targets with `gayxx.net` and date/root catalog fallbacks. |
 | geporner | 7 / yes / 0 | Rejects `/parentalcontrol/`; adds the Eporner video XHR flow and base-36 hash conversion. |
 | gpornone | 30 / yes / 14 | Preserved the working multi-source extraction path and proxy headers. |
@@ -26,7 +26,7 @@ This patch cannot truthfully claim a live post-fix result until it is deployed. 
 | justthegays | 30 / yes / 1 | Preserved working extraction and added fallback/diagnostic coverage. |
 | krx18 | 0 / no / 0 | Added WordPress `doo_player_ajax` resolution plus recursive resolution of returned embeds. |
 | menxtube | 0 / no / 0 | Increased short timeouts, added broad image-card parsing, and nested player extraction. |
-| nurgay | 0 / no / 0 | Added latest/most-viewed home targets and mirror-menu/embed recursion. |
+| nurgay | 0 / no / 0 | Added latest/most-viewed targets plus a rendered-reader fallback for the origin's 403 response; parses `thumbnailUrl`/ISO duration metadata and resolves ListMirror plus nested mirrors. |
 | tophdgayporn | 14 / yes / 1 | Preserved the working direct-media path and added metadata-ID coverage. |
 | traingon | 0 / no / 0 | Added image-anchor catalog fallback and challenge/markup diagnostics. |
 | videosxgays | 24 / yes / 0 | Replaced the old short provider budget with 35 seconds and added recursive player/script extraction. |

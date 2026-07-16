@@ -23,6 +23,19 @@ async function requestJson(url) {
   }
 }
 
+async function requestImage(url) {
+  if (!url) return { ok: false, error: "missing poster", ms: 0 };
+  const started = Date.now();
+  try {
+    const response = await fetch(url, { method: "HEAD", signal: AbortSignal.timeout(timeoutMs), headers: { Accept: "image/*" } });
+    const contentType = String(response.headers.get("content-type") || "");
+    if (!response.ok || !contentType.startsWith("image/")) throw new Error(`HTTP ${response.status} ${contentType || "without image content type"}`);
+    return { ok: true, contentType, ms: Date.now() - started };
+  } catch (error) {
+    return { ok: false, error: error.message, ms: Date.now() - started };
+  }
+}
+
 async function audit(config) {
   const prefix = `${host}/${config.id}`;
   const manifest = await requestJson(`${prefix}/manifest.json`);
@@ -34,6 +47,9 @@ async function audit(config) {
       requestJson(`${prefix}/meta/movie/${encodedId}.json`),
       requestJson(`${prefix}/stream/movie/${encodedId}.json`)
     ]);
+    const streamItems = streams.ok && Array.isArray(streams.body.streams) ? streams.body.streams : [];
+    const posterUrl = meta.body?.meta?.poster || catalogMeta.poster || "";
+    const poster = await requestImage(posterUrl);
     return {
       id: catalogMeta.id,
       name: catalogMeta.name,
@@ -41,14 +57,21 @@ async function audit(config) {
       metadata: Boolean(meta.ok && meta.body?.meta),
       metadataMs: meta.ms,
       metadataError: meta.error || "",
-      streamCount: streams.ok && Array.isArray(streams.body.streams) ? streams.body.streams.length : 0,
+      poster: posterUrl,
+      posterReady: poster.ok,
+      posterMs: poster.ms,
+      posterError: poster.error || "",
+      streamCount: streamItems.length,
+      webReadyStreamCount: streamItems.filter((item) => item?.behaviorHints?.notWebReady !== true).length,
       streamMs: streams.ms,
       streamError: streams.error || ""
     };
   }));
   const metadataCount = samples.filter((item) => item.metadata).length;
-  const playableSamples = samples.filter((item) => item.streamCount > 0).length;
+  const playableSamples = samples.filter((item) => item.webReadyStreamCount > 0).length;
   const streamCount = samples.reduce((total, item) => total + item.streamCount, 0);
+  const webReadyStreamCount = samples.reduce((total, item) => total + item.webReadyStreamCount, 0);
+  const posterSamples = samples.filter((item) => item.posterReady).length;
   const row = {
     id: config.id,
     baseUrl: config.baseUrl,
@@ -61,9 +84,11 @@ async function audit(config) {
     metadata: metadataCount > 0,
     playableSamples,
     streamCount,
+    webReadyStreamCount,
+    posterSamples,
     samples
   };
-  console.log(`${row.id.padEnd(18)} catalog=${String(row.catalogCount).padStart(2)} meta=${String(row.metadataCount).padStart(1)}/${String(row.samplesTested).padEnd(1)} playable=${String(row.playableSamples).padStart(1)}/${String(row.samplesTested).padEnd(1)} streams=${String(row.streamCount).padStart(2)} ${row.catalogError}`);
+  console.log(`${row.id.padEnd(18)} catalog=${String(row.catalogCount).padStart(2)} meta=${String(row.metadataCount).padStart(1)}/${String(row.samplesTested).padEnd(1)} posters=${String(row.posterSamples).padStart(1)}/${String(row.samplesTested).padEnd(1)} web=${String(row.playableSamples).padStart(1)}/${String(row.samplesTested).padEnd(1)} streams=${String(row.webReadyStreamCount).padStart(2)}/${String(row.streamCount).padStart(2)} ${row.catalogError}`);
   return row;
 }
 
@@ -82,4 +107,4 @@ const report = { generatedAt: new Date().toISOString(), host, sampleLimit, resul
 const output = process.env.AUDIT_OUTPUT || "live-audit.json";
 fs.writeFileSync(output, JSON.stringify(report, null, 2) + "\n");
 console.log(`Report: ${output}`);
-if (results.some((item) => !item.catalogCount || !item.metadataCount || !item.playableSamples)) process.exitCode = 2;
+if (results.some((item) => !item.catalogCount || !item.metadataCount || !item.playableSamples || (item.samplesTested > 0 && !item.posterSamples))) process.exitCode = 2;

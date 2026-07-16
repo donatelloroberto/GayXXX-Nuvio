@@ -388,6 +388,7 @@ module.exports = [
     ],
     "itemSelector": "article.loop-video",
     "mode": "nurgay",
+    "readerFallback": true,
     "supportedTypes": [
       "movie"
     ],

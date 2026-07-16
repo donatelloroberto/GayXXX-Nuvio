@@ -52,10 +52,12 @@ For example, the G_Xtapes template is `https://DEPLOYED-HOST/gxtapes/manifest.js
 - Home/search pages map to searchable catalogs.
 - Reversible provider-scoped IDs map catalog entries to metadata and streams.
 - Invalid IDs return empty Stremio results rather than server errors.
-- Stream URLs are deduplicated and required Referer/Origin headers are carried in `behaviorHints.proxyHeaders`.
+- Stream URLs are deduplicated and required Referer/Origin headers are carried in `behaviorHints.proxyHeaders`. Headers no longer incorrectly set `notWebReady`, so Stremio Web does not hide otherwise playable results.
+- Catalog and metadata artwork is served through a provider-scoped poster proxy. It supplies the provider Referer, CORS/cache headers, and a local SVG fallback when the origin blocks image hotlinks.
 - Upstream, parser, and extractor failures are isolated.
 - Metadata keeps the exact catalog content ID so Stremio can always request the matching stream resource.
 - Player discovery covers direct media, JSON/JSON-LD state, packed scripts, nested iframes, DoodStream, StreamTape, Eporner XHR, and WordPress player AJAX.
+- Nurgay retries blocked catalog, metadata, and source-page requests through a rendered-reader fallback, then resolves its ListMirror player and nested mirrors. The fallback is not used by providers that do not need it.
 
 ## Provider diagnostics
 
@@ -68,7 +70,7 @@ https://DEPLOYED-HOST/diagnostics.json?provider=fxggxt&stage=stream&limit=50
 
 The GUI footer links to the same endpoint. This recent window is intentionally bounded and resets when a Vercel function instance is recycled. The identical JSON event is written to Vercel Runtime Logs with `service=stremio-provider-diagnostics`; use the Vercel project log view for the retained record. URLs are reduced to their hostname and common tokens, cookies, authorization values, and API keys are redacted.
 
-Common reason codes are `UPSTREAM_FETCH_FAILED`, `HTTP_FAILURE`, `TIMEOUT`, `CHALLENGE_OR_UNAVAILABLE`, `NO_ITEMS_PARSED`, `FALLBACK_METADATA`, `NO_PLAYABLE_URLS`, `EXTRACTOR_ERROR`, and `EMPTY_STREAMS`.
+Common reason codes are `UPSTREAM_FETCH_FAILED`, `HTTP_FAILURE`, `TIMEOUT`, `CHALLENGE_OR_UNAVAILABLE`, `READER_FALLBACK_USED`, `NO_ITEMS_PARSED`, `FALLBACK_METADATA`, `POSTER_PROXY_FAILED`, `NO_PLAYABLE_URLS`, `EXTRACTOR_ERROR`, and `EMPTY_STREAMS`.
 
 ## Validation
 
@@ -80,7 +82,7 @@ Run a live audit after every deployment:
 npm run audit:live -- https://DEPLOYED-HOST
 ```
 
-The audit tests each manifest and catalog, then checks metadata and streams for up to three catalog samples per provider. It writes `live-audit.json`, includes the recent diagnostic snapshot, and returns a non-zero exit code if a provider has no catalog, no metadata, or no playable sample. `AUDIT_SAMPLE_LIMIT`, `AUDIT_CONCURRENCY`, `AUDIT_TIMEOUT_MS`, and `AUDIT_OUTPUT` tune the run.
+The audit tests each manifest and catalog, then checks metadata, posters, total streams, and Stremio-Web-ready streams for up to three catalog samples per provider. It writes `live-audit.json`, includes the recent diagnostic snapshot, and returns a non-zero exit code if a provider has no catalog, no metadata, or no web-ready playable sample. `AUDIT_SAMPLE_LIMIT`, `AUDIT_CONCURRENCY`, `AUDIT_TIMEOUT_MS`, and `AUDIT_OUTPUT` tune the run.
 
 The provider-by-provider baseline and remediation map is in [docs/PROVIDER-DEBUG.md](docs/PROVIDER-DEBUG.md).
 

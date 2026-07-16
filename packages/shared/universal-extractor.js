@@ -5,16 +5,22 @@ const { recordDiagnostic } = require("./diagnostics");
 
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36";
 const TIMEOUT_MS = Math.max(5000, Number(process.env.EXTRACTOR_FETCH_TIMEOUT_MS || 12000));
+const READER_TIMEOUT_MS = Math.max(TIMEOUT_MS, Number(process.env.READER_TIMEOUT_MS || 30000));
 const MEDIA_RE = /\.(?:m3u8|mp4|mkv|webm)(?:[?#]|$)/i;
 const EMBED_RE = /(?:embed|player|watch|stream|dood|d000d|mixdrop|streamtape|voe|filemoon|vidhide|vidguard|upstream|uqload|lulustream|myvid|jgvcdn|onecdn|ninjastream|ok\.ru)/i;
 const AD_RE = /(?:doubleclick|googlesyndication|google-analytics|exoclick|juicyads|trafficjunky|banner|popads)/i;
 const ASSET_RE = /\.(?:js|css|mjs|map|jpg|jpeg|png|gif|webp|svg|ico|woff2?|ttf)(?:[?#]|$)/i;
+const NON_PLAYER_HOST_RE = /^(?:www\.)?(?:example\.(?:com|org|net)|bsky\.app|x\.com|twitter\.com|instagram\.com|facebook\.com|tiktok\.com|reddit\.com|discord\.(?:com|gg))$/i;
+
+function isBlockedEmbedUrl(url) {
+  try { return NON_PLAYER_HOST_RE.test(new URL(url).hostname); } catch (_) { return true; }
+}
 
 function isEmbedUrl(url, base) {
   try {
     const parsed = new URL(url);
     const parent = new URL(base);
-    if (parsed.toString() === parent.toString() || AD_RE.test(url) || ASSET_RE.test(url) || MEDIA_RE.test(url)) return false;
+    if (parsed.toString() === parent.toString() || isBlockedEmbedUrl(url) || AD_RE.test(url) || ASSET_RE.test(url) || MEDIA_RE.test(url)) return false;
     if (parsed.origin === parent.origin) return /\/(?:embed|player|watch|stream)(?:\/|$)/i.test(parsed.pathname);
     return EMBED_RE.test(parsed.hostname + parsed.pathname);
   } catch (_) { return false; }
@@ -51,7 +57,7 @@ async function fetchText(url, referer, providerId, requestId, options = {}) {
       method: options.method || "GET",
       body: options.body,
       redirect: "follow",
-      signal: AbortSignal.timeout(TIMEOUT_MS),
+      signal: AbortSignal.timeout(options.timeoutMs || TIMEOUT_MS),
       headers: {
         "User-Agent": UA,
         Accept: "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
@@ -68,12 +74,48 @@ async function fetchText(url, referer, providerId, requestId, options = {}) {
     }
     return { text, finalUrl: response.url || url, response, durationMs: Date.now() - started };
   } catch (error) {
-    recordDiagnostic({
+    if (!options.suppressDiagnostic) recordDiagnostic({
       provider: providerId, stage: "extractor-fetch", code: error.name === "TimeoutError" ? "TIMEOUT" : "HTTP_FAILURE",
       message: error.message, url, status: error.status, durationMs: Date.now() - started, requestId
     });
     throw error;
   }
+}
+
+function isChallengePage(html) {
+  const sample = String(html || "").slice(0, 10000);
+  return !sample || /<title>\s*(?:just a moment|access denied|attention required|site unavailable|security check)/i.test(sample) || /cf-chl-|captcha-container|enable javascript and cookies to continue/i.test(sample);
+}
+
+function readerUrl(url) {
+  const parsed = new URL(url);
+  return `https://r.jina.ai/http://${parsed.host}${parsed.pathname}${parsed.search}`;
+}
+
+async function fetchSourcePage(config, pageUrl, requestId) {
+  let directError;
+  try {
+    const page = await fetchText(pageUrl, config.baseUrl, config.id, requestId, { suppressDiagnostic: Boolean(config.readerFallback) });
+    if (!isChallengePage(page.text)) return page;
+    directError = new Error("Challenge or unavailable page returned");
+    directError.code = "CHALLENGE_OR_UNAVAILABLE";
+    directError.status = page.response?.status;
+  } catch (error) {
+    directError = error;
+  }
+  if (!config.readerFallback) throw directError;
+  const started = Date.now();
+  const page = await fetchText(readerUrl(pageUrl), "https://r.jina.ai/", config.id, requestId, {
+    timeoutMs: READER_TIMEOUT_MS,
+    headers: { "X-Return-Format": "html", "X-No-Cache": "true" }
+  });
+  if (isChallengePage(page.text)) throw new Error("Reader returned an unavailable page");
+  recordDiagnostic({
+    level: "info", provider: config.id, stage: "stream", code: "READER_FALLBACK_USED",
+    message: `Direct request failed (${directError?.status || directError?.code || "network"}); rendered fallback succeeded`,
+    url: pageUrl, status: page.response?.status, durationMs: Date.now() - started, requestId
+  });
+  return { ...page, finalUrl: pageUrl, readerFallback: true };
 }
 
 function addUrl(found, raw, base, label = "Direct") {
@@ -113,8 +155,7 @@ function scanEmbeds(value, embeds, base) {
   const candidates = [];
   const patterns = [
     /(?:changeServer|loadPlayer|setPlayer|openPlayer)\([^)]*?["'](https?:\/\/[^"']+)["']/gi,
-    /(?:embedUrl|embed_url|playerUrl|player_url|iframe|embed)\s*["']?\s*[:=]\s*["']([^"']+)["']/gi,
-    /https?:\/\/[^\s'"<>\\]+/gi
+    /(?:embedUrl|embed_url|playerUrl|player_url|iframe|embed)\s*["']?\s*[:=]\s*["']([^"']+)["']/gi
   ];
   for (const pattern of patterns) {
     let match;
@@ -206,7 +247,6 @@ async function resolveWordPressPlayers(html, pageUrl, found, embeds, context) {
 function collect(html, pageUrl, found, embeds) {
   const $ = cheerio.load(html || "");
   scanText(html, found, pageUrl);
-  scanEmbeds(html, embeds, pageUrl);
   const unpacked = unpackPacker(html);
   if (unpacked) scanText(unpacked, found, pageUrl);
   $("script").each((_, element) => {
@@ -223,7 +263,7 @@ function collect(html, pageUrl, found, embeds) {
   $("iframe[src],iframe[data-src],[data-embed],[data-player],meta[itemprop=embedUrl],meta[property='og:video'],meta[property='og:video:url']").each((_, element) => {
     const node = $(element);
     const url = absoluteUrl(node.attr("src") || node.attr("data-src") || node.attr("data-embed") || node.attr("data-player") || node.attr("content"), pageUrl);
-    if (url && !AD_RE.test(url) && !ASSET_RE.test(url)) embeds.add(url);
+    if (url && !isBlockedEmbedUrl(url) && !AD_RE.test(url) && !ASSET_RE.test(url)) embeds.add(url);
   });
   $("ul#mirrorMenu a[data-url],[data-player-url],[data-embed-url],[data-iframe],button[onclick],[onclick]").each((_, element) => {
     const node = $(element);
@@ -234,6 +274,17 @@ function collect(html, pageUrl, found, embeds) {
     const url = absoluteUrl(raw, pageUrl);
     if (url && !AD_RE.test(url) && !ASSET_RE.test(url) && !MEDIA_RE.test(url) && (isEmbedUrl(url, pageUrl) || isMirror)) embeds.add(url);
   });
+}
+
+function playerHtmlForConfig(config, html) {
+  if (config.mode !== "nurgay") return html;
+  const $ = cheerio.load(html || "");
+  const article = $("article[itemprop='video'], article.single-video, main article").first();
+  const root = article.length ? article : $("main").first();
+  return [
+    $.html(root.find("meta[itemprop='embedUrl'], meta[itemprop='thumbnailUrl'], meta[property='og:video'], meta[property='og:video:url']")),
+    $.html(root.find(".video-player, .player, [itemprop='video'] iframe").first())
+  ].filter(Boolean).join("\n");
 }
 
 async function resolveEmbed(url, referer, depth, visited, context) {
@@ -259,10 +310,10 @@ async function extractStreams(config, pageUrl, requestId) {
   const context = { providerId: config.id, providerName: config.name, requestId };
   const started = Date.now();
   try {
-    const page = await fetchText(pageUrl, config.baseUrl, config.id, requestId);
+    const page = await fetchSourcePage(config, pageUrl, requestId);
     const found = new Map();
     const embeds = new Set();
-    collect(page.text, page.finalUrl, found, embeds);
+    collect(playerHtmlForConfig(config, page.text), page.finalUrl, found, embeds);
     if (config.mode === "eporner") await resolveEporner(page.text, page.finalUrl, found, context);
     await resolveWordPressPlayers(page.text, page.finalUrl, found, embeds, context);
     const output = Array.from(found, ([mediaUrl, info]) => stream(mediaUrl, info.referer, config.name, info.label));
