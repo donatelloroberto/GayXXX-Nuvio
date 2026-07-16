@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import { createRequire } from "node:module";
 
+process.env.DIAGNOSTICS_SILENT = "true";
 const require = createRequire(import.meta.url);
 const { createProviderAddon } = require("../packages/shared/addon");
 const providers = require("../packages/shared/providers");

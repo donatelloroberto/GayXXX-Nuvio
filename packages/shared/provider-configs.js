@@ -42,6 +42,10 @@ module.exports = [
     "name": "BoyfriendTV",
     "baseUrl": "https://www.boyfriendtv.com",
     "origin": "https://www.boyfriendtv.com",
+    "homeUrls": [
+      "https://www.boyfriendtv.com/",
+      "https://www.boyfriendtv.com/?filter_quality=hd&s=&sort=newest"
+    ],
     "searchTemplates": [
       "/search/?q=%q%"
     ],
@@ -187,6 +191,7 @@ module.exports = [
     "baseUrl": "https://gaystream.pw",
     "origin": "https://gaystream.pw",
     "searchTemplates": [
+      "/search/%slug%/",
       "/page/1/?s=%q%&search=%q%"
     ],
     "itemSelector": "div.grid-item",
@@ -201,12 +206,15 @@ module.exports = [
   },
   {
     "id": "gayxx",
-    "name": "Gayxx (AsianGay + Boyplus)",
-    "baseUrl": "https://asiangaysex.net",
-    "origin": "https://asiangaysex.net",
+    "name": "Gayxx",
+    "baseUrl": "https://gayxx.net",
+    "origin": "https://gayxx.net",
+    "homeUrls": [
+      "https://gayxx.net/2025/08",
+      "https://gayxx.net/"
+    ],
     "searchTemplates": [
-      "https://asiangaysex.net/?s=%q%",
-      "https://boyplus.net/?s=%q%"
+      "https://gayxx.net/?s=%q%"
     ],
     "itemSelector": "article, div.item, div.video-item, div.thumb-block",
     "mode": "generic",
@@ -275,8 +283,12 @@ module.exports = [
   {
     "id": "gxtapes",
     "name": "G_Xtapes",
-    "baseUrl": "https://gay.xtapes.tw",
-    "origin": "https://gay.xtapes.tw",
+    "baseUrl": "https://gay.xtapes.in",
+    "origin": "https://gay.xtapes.in",
+    "homeUrls": [
+      "https://gay.xtapes.in/?filtre=date&cat=0",
+      "https://gay.xtapes.in/"
+    ],
     "searchTemplates": [
       "/page/1/?s=%q%"
     ],
@@ -367,6 +379,10 @@ module.exports = [
     "name": "Nurgay",
     "baseUrl": "https://nurgay.to",
     "origin": "https://nurgay.to",
+    "homeUrls": [
+      "https://nurgay.to/?filter=latest",
+      "https://nurgay.to/?filter=most-viewed"
+    ],
     "searchTemplates": [
       "/?s=%q%&page=1"
     ],

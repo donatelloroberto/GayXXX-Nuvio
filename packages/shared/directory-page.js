@@ -178,6 +178,7 @@ function renderDirectoryPage(providerConfigs) {
     }
     .toast.visible { opacity: 1; transform: translateY(0); }
     footer { padding: 28px 20px; border-top: 1px solid var(--border); text-align: center; color: #77727f; font-size: .8rem; }
+    footer a { color: #a99cc5; text-underline-offset: 3px; }
     @media (max-width: 1050px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
     @media (max-width: 780px) {
       .hero { padding: 58px 20px 52px; }
@@ -211,7 +212,7 @@ function renderDirectoryPage(providerConfigs) {
     <section id="grid" class="grid" aria-live="polite"></section>
     <div id="empty" class="empty">No providers match your search.</div>
   </main>
-  <footer>Manifest URLs are generated from this deployment. Install only providers you are legally permitted to access.</footer>
+  <footer>Manifest URLs are generated from this deployment. Install only providers you are legally permitted to access. · <a href="/diagnostics.json">Provider diagnostics</a></footer>
   <div id="toast" class="toast" role="status"><span>✓</span><span>Manifest URL copied</span></div>
   <script>
     const providers = ${escapeJson(providers)};

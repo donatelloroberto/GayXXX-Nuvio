@@ -1,6 +1,7 @@
 import { spawnSync } from "node:child_process";
 import { createRequire } from "node:module";
 import { fileURLToPath } from "node:url";
+process.env.DIAGNOSTICS_SILENT = "true";
 const require = createRequire(import.meta.url);
 const configs = require("../packages/shared/provider-configs");
 const { renderDirectoryPage } = require("../packages/shared/directory-page");
@@ -24,8 +25,17 @@ const vercelConfig = require("../vercel.json");
 if (vercelConfig.rewrites[0].source !== "/" || vercelConfig.rewrites[0].destination !== "/api/index?route=") {
   throw new Error("Vercel root GUI rewrite is missing");
 }
+const runtimeTestPath = fileURLToPath(new URL("./test-runtime.mjs", import.meta.url));
+const runtime = spawnSync(process.execPath, [runtimeTestPath], {
+  stdio: "inherit",
+  env: { ...process.env, DIAGNOSTICS_SILENT: "true" }
+});
+if (runtime.status !== 0) process.exit(runtime.status || 1);
 for (const config of configs) {
-  const run = spawnSync(process.execPath, [addonTestPath, config.id], { stdio: "inherit" });
+  const run = spawnSync(process.execPath, [addonTestPath, config.id], {
+    stdio: "inherit",
+    env: { ...process.env, DIAGNOSTICS_SILENT: "true" }
+  });
   if (run.status !== 0) process.exit(run.status || 1);
 }
 console.log(`All ${configs.length} addon contracts passed.`);

@@ -3,6 +3,8 @@
 const cheerio = require("cheerio-without-node-native");
 const allProviderConfigs = require("./provider-configs");
 const providers = require("./providers");
+const { recordDiagnostic } = require("./diagnostics");
+const { extractStreams } = require("./universal-extractor");
 
 function createProviderAddon(providerId) {
 const selectedConfig = allProviderConfigs.find((item) => item.id === providerId);
@@ -12,8 +14,8 @@ const ADDON_ID = "community." + selectedConfig.id;
 const CATALOG_ID = ADDON_ID + ".catalog";
 const ID_PREFIX = ADDON_ID + ":";
 const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36";
-const FETCH_TIMEOUT_MS = Number(process.env.FETCH_TIMEOUT_MS || 6500);
-const PROVIDER_TIMEOUT_MS = Number(process.env.PROVIDER_TIMEOUT_MS || 22000);
+const FETCH_TIMEOUT_MS = Number(process.env.FETCH_TIMEOUT_MS || 12000);
+const PROVIDER_TIMEOUT_MS = Number(process.env.PROVIDER_TIMEOUT_MS || 35000);
 const CACHE_TTL_MS = Number(process.env.CACHE_TTL_MS || 5 * 60 * 1000);
 const MAX_CATALOG_ITEMS = Number(process.env.MAX_CATALOG_ITEMS || 80);
 
@@ -23,7 +25,7 @@ const cache = new Map();
 
 const addonManifest = {
   id: ADDON_ID,
-  version: "2.1.0",
+  version: "2.2.0",
   name: selectedConfig.name,
   description: selectedConfig.description || (selectedConfig.name + " independent Stremio addon."),
   logo: selectedConfig.logo || undefined,
@@ -111,7 +113,7 @@ function normalizeUrl(value, base) {
 
 function allowedHosts(config) {
   const hosts = new Set();
-  const values = [config.baseUrl, config.origin].concat(config.searchTemplates || []);
+  const values = [config.baseUrl, config.origin].concat(config.searchTemplates || [], config.allowedHosts || []);
   for (const value of values) {
     if (!/^https?:\/\//i.test(String(value || ""))) continue;
     try { hosts.add(new URL(value).hostname.toLowerCase()); } catch (_) {}
@@ -119,11 +121,15 @@ function allowedHosts(config) {
   return hosts;
 }
 
-function isAllowedSourceUrl(config, sourceUrl) {
+function isAllowedSourceUrl(config, sourceUrl, pageUrl) {
   try {
     const host = new URL(sourceUrl).hostname.toLowerCase();
     const normalized = host.replace(/^www\./, "");
-    return Array.from(allowedHosts(config)).some((allowed) => allowed.replace(/^www\./, "") === normalized);
+    const hosts = allowedHosts(config);
+    if (pageUrl) {
+      try { hosts.add(new URL(pageUrl).hostname.toLowerCase()); } catch (_) {}
+    }
+    return Array.from(hosts).some((allowed) => allowed.replace(/^www\./, "") === normalized);
   } catch (_) {
     return false;
   }
@@ -171,15 +177,42 @@ function extractCandidateUrl($, element, pageUrl) {
 }
 
 function extractCandidatePoster($, element, pageUrl) {
-  const image = $(element).find("img").first();
-  const attributes = ["data-src", "data-lazy-src", "data-original", "data-thumb", "src", "poster"];
+  const node = $(element);
+  const image = node.is("img") ? node : node.find("img").first();
+  const attributes = ["data-src", "data-lazy-src", "data-original", "data-thumb", "data-poster", "src", "poster"];
   for (const attribute of attributes) {
     const value = image.attr(attribute);
     if (!value || String(value).startsWith("data:")) continue;
     const resolved = normalizeUrl(value, pageUrl);
     if (resolved) return resolved;
   }
+  const srcset = image.attr("data-srcset") || image.attr("srcset");
+  if (srcset) {
+    const value = srcset.split(",").pop().trim().split(/\s+/)[0];
+    const resolved = normalizeUrl(value, pageUrl);
+    if (resolved) return resolved;
+  }
   return "";
+}
+
+function isProbablyVideoUrl(config, sourceUrl) {
+  try {
+    const parsed = new URL(sourceUrl);
+    const path = (parsed.pathname + parsed.search).toLowerCase();
+    if (!path || path === "/") return false;
+    if (/(?:\/|^)(?:tag|tags|category|categories|studio|channels?|creators?|pornstars?|models?|login|register|upload|search|page|privacy|terms|dmca|contact|parentalcontrol|about)(?:\/|\?|$)/i.test(path)) return false;
+    if (/[?&](?:s|search|filter|sort|page|paged)=/i.test(path)) return false;
+    if (/\.(?:jpg|jpeg|png|gif|webp|svg|css|js|xml|pdf)(?:$|\?)/i.test(path)) return false;
+    if (config.detailUrlPattern) return new RegExp(config.detailUrlPattern, "i").test(path);
+    return /\/videos?\/|\/watch\/|\/embed\/|\/movie\/|\/20\d{2}\/\d{1,2}\/|\/\d{5,}(?:\/|$)|\/[a-z0-9-]{10,}\/?$|\.html(?:$|\?)/i.test(path);
+  } catch (_) {
+    return false;
+  }
+}
+
+function isChallengePage(html) {
+  const sample = String(html || "").slice(0, 10000);
+  return !sample || /<title>\s*(?:just a moment|access denied|attention required|site unavailable|security check)/i.test(sample) || /cf-chl-|captcha-container|enable javascript and cookies to continue/i.test(sample);
 }
 
 function expandSearchTemplate(config, template, query) {
@@ -189,12 +222,13 @@ function expandSearchTemplate(config, template, query) {
 }
 
 function parseCatalogPage(config, html, pageUrl) {
+  if (isChallengePage(html)) return [];
   const $ = cheerio.load(html);
   const items = [];
   const seen = new Set();
   const add = (element) => {
     const sourceUrl = extractCandidateUrl($, element, pageUrl);
-    if (!sourceUrl || !isAllowedSourceUrl(config, sourceUrl) || seen.has(sourceUrl)) return;
+    if (!sourceUrl || !isAllowedSourceUrl(config, sourceUrl, pageUrl) || !isProbablyVideoUrl(config, sourceUrl) || seen.has(sourceUrl)) return;
     const title = extractCandidateTitle($, element) || slugTitle(sourceUrl);
     if (!title || title.length < 2) return;
     seen.add(sourceUrl);
@@ -212,13 +246,21 @@ function parseCatalogPage(config, html, pageUrl) {
   };
 
   $(config.itemSelector || "article, .video-item, .item").each((_, element) => add(element));
-  if (!items.length) {
-    $("article, .video-item, .item, .thumb-block, li").each((_, element) => add(element));
+  if (items.length < 8) {
+    $("article, .video-item, .item, .thumb-block, .video, .post, .entry, [class*='video-card'], [class*='video-item']").each((_, element) => add(element));
   }
-  return items;
+  if (items.length < 8) {
+    $("a[href]").each((_, anchor) => {
+      const node = $(anchor);
+      if (!node.find("img,[data-src],[data-thumb],[style*='background']").length && !node.is("[data-src],[data-thumb]")) return;
+      add(anchor);
+    });
+  }
+  return items.sort((a, b) => Number(Boolean(b.poster)) - Number(Boolean(a.poster))).slice(0, 60);
 }
 
 async function fetchText(url, referer) {
+  const started = Date.now();
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
   try {
@@ -232,8 +274,18 @@ async function fetchText(url, referer) {
         ...(referer ? { Referer: referer } : {})
       }
     });
-    if (!response.ok) throw new Error("HTTP " + response.status);
-    return { html: await response.text(), finalUrl: response.url || url };
+    if (!response.ok) {
+      const error = new Error("HTTP " + response.status);
+      error.status = response.status;
+      error.url = url;
+      throw error;
+    }
+    return { html: await response.text(), finalUrl: response.url || url, status: response.status, durationMs: Date.now() - started };
+  } catch (error) {
+    error.url = error.url || url;
+    error.durationMs = Date.now() - started;
+    if (error.name === "AbortError") error.code = "TIMEOUT";
+    throw error;
   } finally {
     clearTimeout(timer);
   }
@@ -257,28 +309,37 @@ function cacheSet(key, value) {
   return value;
 }
 
-async function fetchProviderCatalog(config, query) {
+async function fetchProviderCatalog(config, query, requestId) {
   const cacheKey = "catalog:" + config.id + ":" + (query || "").toLowerCase();
   const cached = cacheGet(cacheKey);
   if (cached) return cached;
 
   const targets = query
     ? (config.searchTemplates || []).slice(0, 2).map((template) => expandSearchTemplate(config, template, query))
-    : [config.baseUrl];
+    : (config.homeUrls || [config.baseUrl]).slice(0, 2).map((target) => normalizeUrl(target, config.baseUrl));
   const results = await Promise.allSettled(targets.map(async (target) => {
     const page = await fetchText(target, config.baseUrl);
-    return parseCatalogPage(config, page.html, page.finalUrl);
+    const items = parseCatalogPage(config, page.html, page.finalUrl);
+    if (!items.length) {
+      recordDiagnostic({ level: "warn", provider: config.id, stage: query ? "search" : "catalog", code: isChallengePage(page.html) ? "CHALLENGE_OR_UNAVAILABLE" : "NO_ITEMS_PARSED", message: `No video cards parsed from ${page.html.length} bytes`, url: page.finalUrl, status: page.status, durationMs: page.durationMs, requestId });
+    }
+    return items;
   }));
   const merged = [];
   const seen = new Set();
   for (const result of results) {
-    if (result.status !== "fulfilled") continue;
+    if (result.status !== "fulfilled") {
+      const error = result.reason || {};
+      recordDiagnostic({ provider: config.id, stage: query ? "search" : "catalog", code: error.code || "UPSTREAM_FETCH_FAILED", message: error.message, url: error.url || config.baseUrl, status: error.status, durationMs: error.durationMs, requestId });
+      continue;
+    }
     for (const item of result.value) {
       if (seen.has(item.id)) continue;
       seen.add(item.id);
       merged.push(item);
     }
   }
+  if (!merged.length) recordDiagnostic({ level: "warn", provider: config.id, stage: query ? "search" : "catalog", code: "EMPTY_RESULT", message: "All upstream targets returned no usable videos", url: config.baseUrl, requestId });
   return cacheSet(cacheKey, merged.slice(0, 30));
 }
 
@@ -289,11 +350,11 @@ function resolveProviderSelection(genre) {
   return id && configById[id] ? [configById[id]] : providerConfigs;
 }
 
-async function getCatalog(extra) {
+async function getCatalog(extra, requestId) {
   const query = cleanText(extra.search || "");
   const skip = Math.max(0, Number.parseInt(extra.skip || "0", 10) || 0);
   const selected = resolveProviderSelection(extra.genre);
-  const settled = await Promise.allSettled(selected.map((config) => fetchProviderCatalog(config, query)));
+  const settled = await Promise.allSettled(selected.map((config) => fetchProviderCatalog(config, query, requestId)));
   const groups = settled.filter((group) => group.status === "fulfilled").map((group) => group.value);
   const metas = [];
   const seen = new Set();
@@ -309,7 +370,7 @@ async function getCatalog(extra) {
   return { metas: metas.slice(skip, skip + MAX_CATALOG_ITEMS) };
 }
 
-function parseMetaPage(config, sourceUrl, html, fallbackTitle) {
+function parseMetaPage(config, sourceUrl, html, fallbackTitle, requestedId) {
   const $ = cheerio.load(html);
   const title = selectFirst($, ["meta[property='og:title']"], "content") ||
     selectFirst($, ["h1", ".entry-title", ".video-title", "title"]) || fallbackTitle || slugTitle(sourceUrl);
@@ -318,9 +379,10 @@ function parseMetaPage(config, sourceUrl, html, fallbackTitle) {
     selectFirst($, ["img[data-src]"], "data-src") ||
     selectFirst($, ["img[src]"], "src") || config.logo || "";
   const description = selectFirst($, ["meta[property='og:description']", "meta[name='description']"], "content") || config.description || config.name;
-  const id = createContentId(config.id, sourceUrl, title);
-  return {
-    id,
+  const published = selectFirst($, ["meta[property='article:published_time']", "meta[itemprop='uploadDate']", "time[datetime]"], "content") || selectFirst($, ["time[datetime]"], "datetime");
+  const duration = selectFirst($, ["meta[property='video:duration']", "meta[itemprop='duration']"], "content");
+  const meta = {
+    id: requestedId || createContentId(config.id, sourceUrl, title),
     type: "movie",
     name: title,
     poster: normalizeUrl(poster, sourceUrl) || undefined,
@@ -329,19 +391,30 @@ function parseMetaPage(config, sourceUrl, html, fallbackTitle) {
     genres: ["Adult", config.name],
     language: config.language || "en",
     website: sourceUrl,
-    behaviorHints: { defaultVideoId: id }
+    releaseInfo: published ? String(published).slice(0, 4) : undefined,
+    runtime: duration && /^\d+$/.test(duration) ? Math.ceil(Number(duration) / 60) + " min" : duration || undefined,
+    behaviorHints: { defaultVideoId: requestedId || createContentId(config.id, sourceUrl, title) }
   };
+  return Object.fromEntries(Object.entries(meta).filter(([, value]) => value !== undefined && value !== ""));
 }
 
-async function getMeta(contentId) {
+async function getMeta(contentId, requestId) {
   const decoded = decodeContentId(contentId);
   const cacheKey = "meta:" + contentId;
   const cached = cacheGet(cacheKey);
   if (cached) return { meta: cached };
   try {
     const page = await fetchText(decoded.sourceUrl, decoded.config.baseUrl);
-    return { meta: cacheSet(cacheKey, parseMetaPage(decoded.config, decoded.sourceUrl, page.html, decoded.title)) };
-  } catch (_) {
+    if (isChallengePage(page.html)) {
+      const error = new Error("Challenge or unavailable page returned");
+      error.code = "CHALLENGE_OR_UNAVAILABLE";
+      error.status = page.status;
+      error.durationMs = page.durationMs;
+      throw error;
+    }
+    return { meta: cacheSet(cacheKey, parseMetaPage(decoded.config, decoded.sourceUrl, page.html, decoded.title, contentId)) };
+  } catch (error) {
+    recordDiagnostic({ level: "warn", provider: decoded.providerId, stage: "metadata", code: error.code || "FALLBACK_METADATA", message: error.message, url: decoded.sourceUrl, status: error.status, durationMs: error.durationMs, requestId });
     const fallback = {
       id: contentId,
       type: "movie",
@@ -394,11 +467,15 @@ function mapProviderStream(config, sourceUrl, item) {
   };
 }
 
-async function getStreams(contentId) {
+async function getStreams(contentId, requestId) {
   const decoded = decodeContentId(contentId);
   const provider = providers[decoded.providerId];
-  if (!provider || typeof provider.scrape !== "function") return { streams: [] };
-  const raw = await withTimeout(
+  const jobs = [withTimeout(
+    extractStreams(decoded.config, decoded.sourceUrl, requestId),
+    PROVIDER_TIMEOUT_MS,
+    decoded.config.name + " universal extraction timed out"
+  )];
+  if (provider && typeof provider.scrape === "function") jobs.push(withTimeout(
     Promise.resolve(provider.scrape({
       title: decoded.title || slugTitle(decoded.sourceUrl),
       name: decoded.title || slugTitle(decoded.sourceUrl),
@@ -406,8 +483,15 @@ async function getStreams(contentId) {
       type: "movie"
     })),
     PROVIDER_TIMEOUT_MS,
-    decoded.config.name + " stream resolution timed out"
-  ).catch(() => []);
+    decoded.config.name + " provider extraction timed out"
+  ));
+
+  const attempts = await Promise.allSettled(jobs);
+  const raw = [];
+  for (const attempt of attempts) {
+    if (attempt.status === "fulfilled" && Array.isArray(attempt.value)) raw.push(...attempt.value);
+    else if (attempt.status === "rejected") recordDiagnostic({ provider: decoded.providerId, stage: "stream", code: /timed out/i.test(attempt.reason?.message || "") ? "TIMEOUT" : "EXTRACTOR_ERROR", message: attempt.reason?.message, url: decoded.sourceUrl, requestId });
+  }
 
   const streams = [];
   const seen = new Set();
@@ -416,6 +500,7 @@ async function getStreams(contentId) {
     seen.add(item.url);
     streams.push(mapProviderStream(decoded.config, decoded.sourceUrl, item));
   }
+  if (!streams.length) recordDiagnostic({ level: "warn", provider: decoded.providerId, stage: "stream", code: "EMPTY_STREAMS", message: `${attempts.length} extractor paths returned no valid URLs`, url: decoded.sourceUrl, requestId });
   return { streams };
 }
 
@@ -438,6 +523,7 @@ function routeParts(requestUrl) {
 }
 
 async function handleRequest(req, res) {
+  const requestId = String(req.headers?.["x-vercel-id"] || req.headers?.["x-request-id"] || `${selectedConfig.id}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`);
   if (req.method === "OPTIONS") {
     res.statusCode = 204;
     res.setHeader("Access-Control-Allow-Origin", "*");
@@ -486,25 +572,26 @@ async function handleRequest(req, res) {
       if (id !== CATALOG_ID) return json(res, 200, { metas: [] });
       let extraSegment = parts[3] || "";
       extraSegment = extraSegment.replace(/\.json$/i, "");
-      json(res, 200, await getCatalog(parseExtra(extraSegment)), "public, max-age=120");
+      json(res, 200, await getCatalog(parseExtra(extraSegment), requestId), "public, max-age=120");
       return;
     }
 
     if (resource === "meta") {
       const rawId = parts.slice(2).join("/").replace(/\.json$/i, "");
-      json(res, 200, await getMeta(rawId), "public, max-age=300");
+      json(res, 200, await getMeta(rawId, requestId), "public, max-age=300");
       return;
     }
 
     if (resource === "stream") {
       const rawId = parts.slice(2).join("/").replace(/\.json$/i, "");
-      json(res, 200, await getStreams(rawId), "no-store");
+      json(res, 200, await getStreams(rawId, requestId), "no-store");
       return;
     }
 
     json(res, 404, { error: "Not found" });
   } catch (error) {
     const resource = routeParts(req.url || "/")[0];
+    recordDiagnostic({ provider: selectedConfig.id, stage: resource || "request", code: "REQUEST_FAILED", message: error?.message, requestId });
     if (resource === "catalog") return json(res, 200, { metas: [] }, "no-store");
     if (resource === "meta") return json(res, 200, { meta: null }, "no-store");
     if (resource === "stream") return json(res, 200, { streams: [] }, "no-store");

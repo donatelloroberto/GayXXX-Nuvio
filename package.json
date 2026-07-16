@@ -10,6 +10,8 @@
     "generate": "node tools/generate-workspaces.mjs",
     "build": "node tools/build-addon.mjs",
     "test": "node tools/test-all.mjs",
+    "audit:live": "node tools/audit-live.mjs",
+    "probe:upstreams": "node tools/probe-upstreams.mjs",
     "start": "node packages/shared/directory-server.js",
     "dev": "node packages/shared/directory-server.js"
   },

@@ -1,13 +1,13 @@
 /*
  * G_Xtapes — Nuvio local scraper
  * Converted from the CloudStream package GXtapes.
- * Original source domain: https://gay.xtapes.tw
+ * Original source domain: https://gay.xtapes.in
  * Contract: module.exports.getStreams(tmdbId, mediaType, season, episode)
  * Runtime dependencies: Nuvio fetch shim + cheerio-without-node-native.
  */
 var cheerio = require("cheerio-without-node-native");
 
-var CONFIG = {"id":"gxtapes","name":"G_Xtapes","baseUrl":"https://gay.xtapes.tw","origin":"https://gay.xtapes.tw","searchTemplates":["/page/1/?s=%q%"],"itemSelector":"ul.listing-tube li","mode":"generic","supportedTypes":["movie"]};
+var CONFIG = {"id":"gxtapes","name":"G_Xtapes","baseUrl":"https://gay.xtapes.in","origin":"https://gay.xtapes.in","searchTemplates":["/page/1/?s=%q%"],"itemSelector":"ul.listing-tube li","mode":"generic","supportedTypes":["movie"]};
 var TMDB_API_KEY = process.env.TMDB_API_KEY || "";
 var UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36";
 var DEFAULT_HEADERS = {

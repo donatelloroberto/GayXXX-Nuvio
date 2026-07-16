@@ -2,6 +2,7 @@
 
 const { createProviderAddon, providerConfigs } = require("./addon");
 const { renderDirectoryPage } = require("./directory-page");
+const { diagnosticsSnapshot } = require("./diagnostics");
 const ids = new Set(providerConfigs.map((item) => item.id));
 const instances = new Map();
 
@@ -30,6 +31,15 @@ function handleSharedRequest(req, res) {
       name: "GayXXX Individual Stremio Addons",
       addons: providerConfigs.map((item) => ({ id: item.id, name: item.name, manifest: `/${item.id}/manifest.json` }))
     });
+  }
+  if (parts.length === 1 && parts[0] === "diagnostics.json") {
+    res.setHeader("Cache-Control", "no-store");
+    return send(res, 200, diagnosticsSnapshot({
+      provider: parsed.searchParams.get("provider"),
+      stage: parsed.searchParams.get("stage"),
+      level: parsed.searchParams.get("level"),
+      limit: parsed.searchParams.get("limit")
+    }));
   }
   const providerId = parts.shift();
   if (!ids.has(providerId)) return send(res, 404, { error: "Unknown addon" });

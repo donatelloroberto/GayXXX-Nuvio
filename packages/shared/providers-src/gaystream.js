@@ -7,7 +7,7 @@
  */
 var cheerio = require("cheerio-without-node-native");
 
-var CONFIG = {"id":"gaystream","name":"GayStream","baseUrl":"https://gaystream.pw","origin":"https://gaystream.pw","searchTemplates":["/page/1/?s=%q%&search=%q%"],"itemSelector":"div.grid-item","mode":"generic","supportedTypes":["movie"]};
+var CONFIG = {"id":"gaystream","name":"GayStream","baseUrl":"https://gaystream.pw","origin":"https://gaystream.pw","searchTemplates":["/search/%slug%/"],"itemSelector":"div.grid-item","mode":"generic","supportedTypes":["movie"]};
 var TMDB_API_KEY = process.env.TMDB_API_KEY || "";
 var UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36";
 var DEFAULT_HEADERS = {
